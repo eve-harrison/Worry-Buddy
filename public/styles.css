@@ -1,19 +1,14 @@
 nav {
-    background-color: black;
+    background-size: cover;
+    background-color: rgb(107, 214, 13);
     color: white;
     display: flex;
     justify-content: space-between;
     padding: 30px 60px;
 }
 
-nav ul {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-}
-
-nav li {    
-    list-style: none;    
+nav li {
+    list-style: none;
 }
 
 nav li a {
@@ -26,4 +21,9 @@ nav li a {
 nav li a:hover {
     color: yellow;
     text-decoration: none;
+}
+
+#indexMainDiv {
+    justify-content: center;
+    align-items: center;
 }
