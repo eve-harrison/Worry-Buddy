@@ -48,6 +48,14 @@ app.get("/game", (req, res) => {
     res.render("game")
 })
 
+app.get("/platformer", (req, res) => {
+    res.render("platformer")
+})
+
+app.get("/dragAndDrop", (req, res) => {
+    res.render("dragAndDrop")
+})
+
 app.post("/auth/register", (req, res) => {
     const { name, email, password, password_confirm } = req.body
 
