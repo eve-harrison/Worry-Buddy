@@ -6,29 +6,35 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/styles.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
 </head>
 </head>
 
 <body>
-    <h1><mark> The Worry Buddy </mark></h1>
-    <img src="/img/screenshotOfGame.jpg" alt="Picture of The Worry Buddy game">
-    <a href="/login"><button class="btn btn-success btn-lg"> Login </button>
-    </a>
-    <a href="/register">
-        <button class="btn btn-success btn-lg"> Sign up </button>
-    </a>
-    <a href="/game">
-        <button class="btn btn-success btn-lg"> Main Game </button>
-    </a>
-    <a href="/platformer">
-        <button class="btn btn-success btn-lg"> Platformer </button>
-    </a>
-    <a href="/dragAndDrop">
-        <button class="btn btn-success btn-lg"> Drag and Drop </button>
-    </a>
-
+    <nav id="loginNavBar">
+        <li> <a href="/game">
+                <button class="btn btn-success btn-lg"> Main Game </button>
+            </a>
+            <a href="/platformer">
+                <button class="btn btn-success btn-lg"> Platformer </button>
+            </a>
+            <a href="/dragAndDrop">
+                <button class="btn btn-success btn-lg"> Drag and Drop </button>
+        </li>
+    </nav>
+    <div id="mainBodyDiv">
+        <h1>The Worry Buddy </h1>
+        <img src="/img/screenshotOfGame.jpg" alt="Picture of The Worry Buddy game">
+        <a href="/login"><button class="btn btn-success btn-lg"> Login </button>
+        </a>
+        <a href="/register">
+            <button class="btn btn-success btn-lg"> Sign up </button>
+        </a>
+    </div>
 </body>
 
 </html>
