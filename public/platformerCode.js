@@ -4,6 +4,7 @@ const c = canvas.getContext('2d')
 canvas.width = 1024
 canvas.height = 576
 const gravity = 0.5
+var frameDelay = 0
 
 let backgroundImage = new Image();
 backgroundImage.src = './img/bestBackground.jpg'
@@ -17,18 +18,17 @@ hill.src = './img/greenHillOne.png'
 let smallPlatform = new Image();
 smallPlatform.src = './img/bigPlatform.png'
 
-let characterLeft = new Image();
-characterLeft.src = './img/playerLeft.png'
+let playerIdle = new Image();
+playerIdle.src = './img/playerIdle.png'
 
-let characterRight = new Image();
-characterRight.src = './img/playerRight.png'
+let playerRunningRight = new Image();
+playerRunningRight.src = './img/playerRunningRight.png'
 
-let characterUp = new Image();
-characterUp.src = './img/playerUp.png'
+let playerRunningLeft = new Image();
+playerRunningLeft.src = './img/playerRunningLeft.png'
 
-let characterDown = new Image();
-characterDown.src = './img/playerDown.png'
-
+let playerJumping = new Image();
+playerJumping.src = './img/playerJumpingRight.png'
 
 class Player {
     constructor() {
@@ -41,30 +41,55 @@ class Player {
             x: 0,
             y: 0
         }
-        this.width = 66
-        this.height = 150
-        this.image = characterRight
+        this.width = 140
+        this.height = 140
+        this.image = playerIdle
+        this.frames = 0
+        this.sprites = {
+            stand: playerIdle,
+            run: {
+                right: playerRunningRight,
+                left: playerRunningLeft
+            },
+            jump: playerJumping
+        }
+
+        this.currentSprite = this.sprites.stand
     }
 
     draw() {
-
-        c.drawImage(this.image, this.position.x, this.position.y, this.width, this.height)
-
+        c.imageSmoothingEnabled = false
+        c.drawImage(this.currentSprite,
+            32 * this.frames,
+            0,
+            32,
+            32,
+            this.position.x,
+            this.position.y,
+            this.width,
+            this.height)
     }
 
     update() {
+        if (frameDelay == 3) {
+            this.frames++
+            frameDelay = 0
+        } else {
+            frameDelay++;
+        }
+
+        if (this.frames > 4) this.frames = 0
         this.draw()
         this.position.y += this.velocity.y
         this.position.x += this.velocity.x
 
         if (this.position.y + this.height + this.velocity.y <= canvas.height)
             this.velocity.y += gravity
-        // else this.velocity.y = 0
     }
 
 }
 
-class Platform {
+class DrawObject {
     constructor({ x, y, image }) {
         this.position = {
             x: x,
@@ -79,43 +104,32 @@ class Platform {
     }
 }
 
-class BackgroundObject {
-    constructor({ x, y, image }) {
-        this.position = {
-            x: x,
-            y: y
-        }
-        this.image = image
-        this.width = image.width
-        this.height = image.height
-    }
-    draw() {
-        c.drawImage(this.image, this.position.x, this.position.y)
-    }
-}
 
 let player = new Player()
 
-let platforms = [new Platform({
+let platforms = [new DrawObject({
     x: -1, y: 400,
     image: groundImage
-}), new Platform({
+}), new DrawObject({
     x: groundImage.width - 30, y: 400,
     image: groundImage
-}), new Platform({
+}), new DrawObject({
     x: 2 * groundImage.width + 100, y: 400,
     image: groundImage
 })]
 
-let backgroundObjects = [new BackgroundObject({
+let backgroundObjects = [new DrawObject({
     x: -1, y: -1,
     image: backgroundImage
-}), new BackgroundObject({
+}), new DrawObject({
     x: -1, y: -1,
     image: hill
 })]
 
 let keys = {
+    up: {
+        pressed: false
+    },
     right: {
         pressed: false
     },
@@ -141,42 +155,30 @@ function gameStart() {
     hill = new Image();
     hill.src = './img/greenHillOne.png'
 
-    characterLeft = new Image();
-    characterLeft.src = './img/playerLeft.png'
+    let playerIdle = new Image();
+    playerIdle.src = './img/playerIdle.png'
 
-    characterRight = new Image();
-    characterRight.src = './img/playerRight.png'
-
-    characterUp = new Image();
-    characterUp.src = './img/playerUp.png'
-
-    characterDown = new Image();
-    characterDown.src = './img/playerDown.png'
-
-    platforms = [new Platform({
-        x: 5 * groundImage.width + 300, y: 300,
-        image: smallPlatform
-    }), new Platform({
+    platforms = [new DrawObject({
         x: -1, y: 450,
         image: groundImage
-    }), new Platform({
+    }), new DrawObject({
         x: groundImage.width - 30, y: 450,
         image: groundImage
-    }), new Platform({
+    }), new DrawObject({
         x: 2 * groundImage.width + 100, y: 450,
         image: groundImage
-    }), new Platform({
+    }), new DrawObject({
         x: 3 * groundImage.width + 100, y: 450,
         image: groundImage
-    }), new Platform({
+    }), new DrawObject({
         x: 4 * groundImage.width + 100, y: 450,
         image: groundImage
     })]
 
-    backgroundObjects = [new BackgroundObject({
+    backgroundObjects = [new DrawObject({
         x: -1, y: -1,
         image: backgroundImage
-    }), new BackgroundObject({
+    }), new DrawObject({
         x: -1, y: -1,
         image: hill
     })]
@@ -255,11 +257,15 @@ window.addEventListener('keydown', (e) => {
     e = e || window.event;
     if (e.key === 'ArrowUp') {
         player.velocity.y -= 10
+        player.currentSprite = player.sprites.jump
+        keys.up.pressed = true
     }
     if (e.key === 'ArrowLeft') {
+        player.currentSprite = player.sprites.run.left
         keys.left.pressed = true
     }
     if (e.key === 'ArrowRight') {
+        player.currentSprite = player.sprites.run.right
         keys.right.pressed = true
     }
 })
@@ -268,8 +274,14 @@ window.addEventListener('keyup', (e) => {
     e = e || window.event;
     if (e.key === 'ArrowLeft') {
         keys.left.pressed = false
+        player.currentSprite = player.sprites.stand
     }
     if (e.key === 'ArrowRight') {
         keys.right.pressed = false
+        player.currentSprite = player.sprites.stand
+    }
+    if (e.key === 'ArrowUp') {
+        keys.up.pressed = false
+        player.currentSprite = player.sprites.stand
     }
 })
