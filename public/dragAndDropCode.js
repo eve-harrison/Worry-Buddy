@@ -1,6 +1,8 @@
 const canvas = document.querySelector('canvas')
 const c = canvas.getContext('2d')
 
+var container = document.querySelector(".text");
+
 let backgroundImage = new Image();
 backgroundImage.src = './img/ROOM.png'
 
@@ -56,21 +58,9 @@ class Player {
 
 }
 
-var container = document.querySelector(".text");
-var speeds = {
-    pause: 500,
-    slow: 120,
-    normal: 90,
-};
-var textLines = [
-    { speed: speeds.slow, string: "Sam has to sleep alone tonight." },
-    { speed: speeds.pause, string: "", pause: true },
-    { speed: speeds.normal, string: "How do you think Sam feels?" },
-    { speed: speeds.normal, string: "Click the emotion you think Sam is feeling." }
-];
-var characters = [];
 
-function writeUpNewSituation() {
+function writeUpNewSituation(speeds, textLines) {
+    var characters = []
     textLines.forEach((line, index) => {
         if (index < textLines.length - 1) {
             line.string += " ";
@@ -102,7 +92,6 @@ function writeUpNewSituation() {
             }, delay);
         }
     }
-
     setTimeout(() => {
         revealOneCharacter(characters);
     }, 600)
@@ -148,16 +137,41 @@ function updateAnxietyScore() {
 
 function moveToNextScene() {
     document.getElementById("situationText").innerText = ""
-    document.getElementById("canvas").style.backgroundImage = "url(img/smallPlatform.png)"
-    document.getElementById("div1").style.backgroundImage = "url(img/smallPlatform.png)"
-    var newSituation = [
-        { speed: speeds.slow, string: "AHHHHH" },
+    document.getElementById("canvas").style.backgroundImage = "url(img/classroom.png)"
+    document.getElementById("canvas").style.width = "400px"
+    document.getElementById("canvas").style.height = "550px"
+    document.getElementById("div1").style.backgroundImage = "url(img/classroomWall.png)"
+    document.getElementById("div1").style.width = "400px"
+    document.getElementById("div1").style.height = "550px"
+
+    document.querySelectorAll('.emotionButton').forEach(function (button) {
+        button.style.backgroundColor = "#a5958c"
+        button.style.border = "none"
+    });
+
+    writeUpNewSituation(speeds = {
+        pause: 500,
+        slow: 120,
+        normal: 90,
+    }, textLines = [
+        { speed: speeds.slow, string: "Sam has a test today but they forgot to study." },
         { speed: speeds.pause, string: "", pause: true },
         { speed: speeds.normal, string: "How do you think Sam feels?" },
-        { speed: speeds.normal, string: "Click the emotion you think Sam is feeling." }
-    ];
-    writeUpNewSituation(newSituation)
+        { speed: speeds.normal, string: "Click the emotion Sam is feeling." }
+    ])
 }
 
-writeUpNewSituation()
+
+writeUpNewSituation(speeds = {
+    pause: 500,
+    slow: 120,
+    normal: 90
+}, textLines = [
+    { speed: speeds.slow, string: "Sam has to sleep alone tonight." },
+    { speed: speeds.pause, string: "", pause: true },
+    { speed: speeds.normal, string: "How do you think Sam feels?" },
+    { speed: speeds.normal, string: "Click the emotion you think Sam is feeling." }
+])
+
+
 animate()
