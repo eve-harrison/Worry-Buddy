@@ -9,9 +9,12 @@ backgroundImage.src = './img/ROOM.png'
 let playerIdle = new Image();
 playerIdle.src = './img/playerIdle.png'
 
+let robotImage = new Image();
+robotImage.src = './img/robotTeacher.png'
+
 let frameDelay = 0
 
-document.getElementById("next").disabled = true
+document.getElementById("scene2").disabled = true
 
 class Player {
     constructor() {
@@ -28,6 +31,12 @@ class Player {
         this.height = 180
         this.image = playerIdle
         this.frames = 0
+
+        this.updatePosition = function (newPosition) {
+            c.clearRect(0, 0, canvas.width, canvas.height)
+            this.position = newPosition
+        }
+
     }
 
     draw() {
@@ -107,48 +116,108 @@ function animate() {
 
 function updateAnxietyScore() {
     let anxietyScore = 0
-    document.getElementById("next").disabled = false;
+
     const happyButton = document.getElementById("btn1")
+    const dontCareButton = document.getElementById("btn2")
     const sadButton = document.getElementById("btn3")
     const worriedButton = document.getElementById("btn4")
     const scaredButton = document.getElementById("btn5")
 
     happyButton.addEventListener("click", () => {
-        anxietyScore = anxietyScore
-        console.log("Anxiety level = " + anxietyScore)
+        document.getElementById("anxietyLevel").innerHTML = anxietyScore - 1
+    })
+
+    dontCareButton.addEventListener("click", () => {
+        document.getElementById("anxietyLevel").innerHTML = anxietyScore
     })
 
     sadButton.addEventListener("click", () => {
-        anxietyScore += 1
-        console.log("Anxiety level = " + anxietyScore)
+        document.getElementById("anxietyLevel").innerHTML = anxietyScore + 1
     })
 
     worriedButton.addEventListener("click", () => {
-        anxietyScore += 2
-        console.log("Anxiety level = " + anxietyScore)
+        document.getElementById("anxietyLevel").innerHTML = anxietyScore + 2
     })
 
     scaredButton.addEventListener("click", () => {
-        anxietyScore += 3
-        console.log("Anxiety level = " + anxietyScore)
+        document.getElementById("anxietyLevel").innerHTML = anxietyScore + 3
     })
 
 }
 
-function moveToNextScene() {
+function enableNextButton() {
+    updateAnxietyScore()
+    document.getElementById("scene2").disabled = false
+    document.getElementById("scene3").disabled = false
+    document.getElementById("scene4").disabled = false
+    document.getElementById("scene5").disabled = false
+}
+
+function moveToSceneTwo() {
     document.getElementById("situationText").innerText = ""
-    document.getElementById("canvas").style.backgroundImage = "url(img/classroom.png)"
-    document.getElementById("canvas").style.width = "400px"
-    document.getElementById("canvas").style.height = "550px"
+    document.getElementById("canvas").style.backgroundImage = "url(img/schoolRoom.png)"
     document.getElementById("div1").style.backgroundImage = "url(img/classroomWall.png)"
+
+    document.getElementById("canvas").style.width = "590px"
     document.getElementById("div1").style.width = "400px"
-    document.getElementById("div1").style.height = "550px"
+
+    document.getElementById("scene2").style.display = "none"
+    document.getElementById("scene3").style.display = "block"
 
     document.querySelectorAll('.emotionButton').forEach(function (button) {
         button.style.backgroundColor = "#a5958c"
         button.style.border = "none"
     });
 
+    const buttons = document.querySelectorAll('.emotionButton');
+    let activeButton = null;
+    buttons.forEach(button => {
+        button.addEventListener('click', () => {
+            if (activeButton) {
+                activeButton.classList.remove('active');
+            }
+            button.classList.add('active');
+            activeButton = button;
+        });
+    });
+
+    writeUpNewSituation(speeds = {
+        pause: 500,
+        slow: 120,
+        normal: 90,
+    }, textLines = [
+        { speed: speeds.slow, string: "School can be crowded sometimes. " },
+        { speed: speeds.pause, string: "", pause: true },
+        { speed: speeds.normal, string: "Sam has to go to crowded places all the time. " },
+        { speed: speeds.normal, string: "How do crowded places make YOU feel?" }
+    ])
+}
+
+function moveToSceneThree() {
+    document.getElementById("situationText").innerText = ""
+    document.getElementById("canvas").style.backgroundImage = "url(img/classroom.png)"
+
+    document.getElementById("scene3").style.display = "none"
+    document.getElementById("scene4").style.display = "block"
+    writeUpNewSituation(speeds = {
+        pause: 500,
+        slow: 120,
+        normal: 90,
+    }, textLines = [
+        { speed: speeds.slow, string: "Today is show and tell!" },
+        { speed: speeds.pause, string: "", pause: true },
+        { speed: speeds.normal, string: "Sam has to speak in front of the class. " },
+        { speed: speeds.normal, string: "Click the emotion Sam is feeling." }
+    ])
+
+    player.updatePosition({ x: 750, y: 100 })
+
+}
+
+function moveToSceneFour() {
+    document.getElementById("situationText").innerText = ""
+    document.getElementById("scene4").style.display = "none"
+    document.getElementById("scene5").style.display = "block"
     writeUpNewSituation(speeds = {
         pause: 500,
         slow: 120,
@@ -161,16 +230,47 @@ function moveToNextScene() {
     ])
 }
 
+function moveToSceneFive() {
+    document.getElementById("situationText").innerText = ""
+    document.getElementById("scene5").style.display = "none"
+    document.getElementById("mainGameButton").style.display = "block"
+
+
+    document.getElementById("canvas").style.backgroundImage = "url(img/ROOM.png)"
+    document.getElementById("div1").style.backgroundImage = "url(img/questionsBackground.png)"
+
+    document.getElementById("canvas").style.width = "700px"
+    document.getElementById("canvas").style.height = "550px"
+
+
+    document.querySelectorAll('.emotionButton').forEach(function (button) {
+        button.style.backgroundColor = "#6c656a"
+        button.style.border = "none"
+    });
+
+    writeUpNewSituation(speeds = {
+        pause: 500,
+        slow: 120,
+        normal: 90
+    }, textLines = [
+        { speed: speeds.slow, string: "Sam has to sleep alone tonight." },
+        { speed: speeds.pause, string: "", pause: true },
+        { speed: speeds.normal, string: "How do you think Sam feels?" },
+        { speed: speeds.normal, string: "Click the emotion you think Sam is feeling." }
+    ])
+
+    player.updatePosition({ x: 650, y: 300 })
+}
 
 writeUpNewSituation(speeds = {
     pause: 500,
     slow: 120,
-    normal: 90
+    normal: 90,
 }, textLines = [
-    { speed: speeds.slow, string: "Sam has to sleep alone tonight." },
+    { speed: speeds.slow, string: "Time to wake up and go to school! " },
     { speed: speeds.pause, string: "", pause: true },
-    { speed: speeds.normal, string: "How do you think Sam feels?" },
-    { speed: speeds.normal, string: "Click the emotion you think Sam is feeling." }
+    { speed: speeds.normal, string: "Sam gets ready for school everyday. " },
+    { speed: speeds.normal, string: "How does going to school make YOU feel?" }
 ])
 
 

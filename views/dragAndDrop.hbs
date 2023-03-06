@@ -22,7 +22,24 @@
         background-color: #6c656a;
     }
 
+    .mainGameButton {
+        float: right;
+        border: none;
+        background-color: blanchedalmond;
+        color: rgb(232, 113, 16);
+        padding: 15px 32px;
+        text-align: center;
+        display: inline-block;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
     .emotionButton:focus {
+        background-color: rgb(200, 255, 0);
+    }
+
+    .emotionButton.active {
         background-color: rgb(200, 255, 0);
     }
 
@@ -81,29 +98,47 @@
         <canvas id="canvas" width="1024" height="576" style="width: 50%"></canvas>
         <div id="div1" style="flex-grow: 1">
             <div id="buttonContainer" class="container">
-                <button title="Happy" class="emotionButton" onclick="updateAnxietyScore()">
+                <button title="Happy" class="emotionButton" onclick="enableNextButton()">
                     <img id="btn1" src="./img/happyEmoji.png" width="100" height="100" />
                 </button>
-                <button title="Don't Care" class="emotionButton" onclick="updateAnxietyScore()">
+                <button title="Don't Care" class="emotionButton" onclick="enableNextButton()">
                     <img id="btn2" src="./img/dontCareEmoji.png" width="100" height="100" />
                 </button>
-                <button title="Sad" class="emotionButton" onclick="updateAnxietyScore()">
+                <button title="Sad" class="emotionButton" onclick="enableNextButton()">
                     <img id="btn3" src="./img/sadEmoji.png" width="100" height="100" />
                 </button>
-                <button title="Scared" class="emotionButton" onclick="updateAnxietyScore()">
+                <button title="Scared" class="emotionButton" onclick="enableNextButton()">
                     <img id="btn4" src="./img/scaredEmoji.png" width="100" height="100" />
                 </button>
-                <button title="Worried" class="emotionButton" onclick="updateAnxietyScore()">
+                <button title="Worried" class="emotionButton" onclick="enableNextButton()">
                     <img id="btn5" src="./img/worriedEmoji.png" width="100" height="100" />
                 </button>
             </div>
             <div id="situationText" class="text">
             </div>
             <div id="nextSceneButtonContainer">
-                <button id="next" class="nextSceneButton" onclick="moveToNextScene()" disbaled>Next</button>
+                <button id="scene2" class="nextSceneButton" onclick="moveToSceneTwo()" disbaled>Next</button>
+                <button id="scene3" class="nextSceneButton" style="display:none;" onclick="moveToSceneThree()"
+                    disabled>Next</button>
+                <button id="scene4" class="nextSceneButton" style="display:none;" onclick="moveToSceneFour()"
+                    disabled>Next</button>
+                <button id="scene5" class="nextSceneButton" style="display:none;" onclick="moveToSceneFive()"
+                    disabled>Next</button>
+                <a href="/platformer">
+                    <button id="mainGameButton" class="mainGameButton" style="display:none;">Continue to main
+                        game
+                    </button>
+                </a>
+            </div>
+            <div id="anxietyScoreContainer">
+                <p>Anxiety Level: <span id="anxietyLevel">0</span></p>
             </div>
         </div>
-
+        <script type="text/javascript">
+            window.onload = function () {
+                alert("Welcome to the game blah blah blah");
+            }
+        </script>
         <script src="/dragAndDropCode.js"></script>
     </div>
 </body>
