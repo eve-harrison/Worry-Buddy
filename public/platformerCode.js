@@ -1,7 +1,7 @@
 const canvas = document.querySelector('canvas')
 const c = canvas.getContext('2d')
 
-canvas.width = 1024
+canvas.width = 1300
 canvas.height = 576
 const gravity = 0.5
 var frameDelay = 0
@@ -15,8 +15,8 @@ groundImage.src = './img/bigPlatform.png'
 let hill = new Image();
 hill.src = './img/greenHillOne.png'
 
-let smallPlatform = new Image();
-smallPlatform.src = './img/bigPlatform.png'
+let tallPlatform = new Image();
+tallPlatform.src = './img/smallPlatform.png'
 
 let playerIdle = new Image();
 playerIdle.src = './img/playerIdle.png'
@@ -30,11 +30,26 @@ playerRunningLeft.src = './img/playerRunningLeft.png'
 let playerJumping = new Image();
 playerJumping.src = './img/playerJumpingRight.png'
 
+let platforms = []
+let backgroundObjects = []
+let keys = {
+    up: {
+        pressed: false
+    },
+    right: {
+        pressed: false
+    },
+    left: {
+        pressed: false
+    }
+}
+let scroll = 0
+
 class Player {
     constructor() {
         this.speed = 10
         this.position = {
-            x: 100,
+            x: 600,
             y: 100
         }
         this.velocity = {
@@ -89,6 +104,8 @@ class Player {
 
 }
 
+let player = new Player()
+
 class DrawObject {
     constructor({ x, y, image }) {
         this.position = {
@@ -104,82 +121,109 @@ class DrawObject {
     }
 }
 
-
-let player = new Player()
-
-let platforms = [new DrawObject({
-    x: -1, y: 400,
-    image: groundImage
-}), new DrawObject({
-    x: groundImage.width - 30, y: 400,
-    image: groundImage
-}), new DrawObject({
-    x: 2 * groundImage.width + 100, y: 400,
-    image: groundImage
-})]
-
-let backgroundObjects = [new DrawObject({
-    x: -1, y: -1,
-    image: backgroundImage
-}), new DrawObject({
-    x: -1, y: -1,
-    image: hill
-})]
-
-let keys = {
-    up: {
-        pressed: false
-    },
-    right: {
-        pressed: false
-    },
-    left: {
-        pressed: false
-    }
-}
-
-let scroll = 0
-
 function gameStart() {
+    console.log("game start")
     player = new Player()
-
-    backgroundImage = new Image();
-    backgroundImage.src = './img/bestBackground.jpg'
-
-    groundImage = new Image();
-    groundImage.src = './img/bigPlatform.png'
-
-    smallPlatform = new Image();
-    smallPlatform.src = './img/bigPlatform.png'
-
-    hill = new Image();
-    hill.src = './img/greenHillOne.png'
-
-    let playerIdle = new Image();
-    playerIdle.src = './img/playerIdle.png'
 
     platforms = [new DrawObject({
         x: -1, y: 450,
         image: groundImage
-    }), new DrawObject({
-        x: groundImage.width - 30, y: 450,
+    }),
+
+    new DrawObject({
+        x: groundImage.width - 38, y: 450,
         image: groundImage
-    }), new DrawObject({
-        x: 2 * groundImage.width + 100, y: 450,
+    }),
+
+    new DrawObject({
+        x: (2 * groundImage.width) - 70, y: 450,
         image: groundImage
-    }), new DrawObject({
-        x: 3 * groundImage.width + 100, y: 450,
+    }),
+
+    new DrawObject({
+        x: (3 * groundImage.width) + 150, y: 450,
         image: groundImage
-    }), new DrawObject({
-        x: 4 * groundImage.width + 100, y: 450,
+    }),
+
+    new DrawObject({
+        x: (4 * groundImage.width) + 500, y: 450,
+        image: groundImage
+    }),
+
+    new DrawObject({
+        x: (5 * groundImage.width) + 450, y: 450,
+        image: groundImage
+    }),
+
+    new DrawObject({
+        x: (4 * groundImage.width), y: 225,
+        image: tallPlatform
+    }),
+
+    new DrawObject({
+        x: (6 * groundImage.width) + 450, y: 450,
+        image: groundImage
+    }),
+
+
+    new DrawObject({
+        x: (7 * groundImage.width) + 750, y: 450,
+        image: groundImage
+    }),
+
+    new DrawObject({
+        x: (8 * groundImage.width) + 750, y: 450,
+        image: groundImage
+    }),
+
+    new DrawObject({
+        x: (9 * groundImage.width) + 750, y: 250,
+        image: groundImage
+    }),
+
+    new DrawObject({
+        x: (10 * groundImage.width) + 750, y: 450,
+        image: groundImage
+    }),
+
+    new DrawObject({
+        x: (11 * groundImage.width) + 900, y: 250,
+        image: groundImage
+    }),
+
+    new DrawObject({
+        x: (12 * groundImage.width) + 1200, y: 450,
+        image: groundImage
+    }),
+
+    new DrawObject({
+        x: (13 * groundImage.width) + 1200, y: 450,
         image: groundImage
     })]
+
 
     backgroundObjects = [new DrawObject({
         x: -1, y: -1,
         image: backgroundImage
-    }), new DrawObject({
+    }),
+
+    new DrawObject({
         x: -1, y: -1,
+        image: hill
+    }),
+
+    new DrawObject({
+        x: (4 * groundImage.width) + 30, y: 20,
+        image: hill
+    }),
+
+    new DrawObject({
+        x: (6 * groundImage.width) + 30, y: 10,
+        image: hill
+    }),
+
+    new DrawObject({
+        x: (9 * groundImage.width) + 30, y: 10,
         image: hill
     })]
 
@@ -239,7 +283,7 @@ function animate() {
 
     })
 
-    if (scroll > 2000) {
+    if (scroll < -8200) {  // edge of the last hill when you jump off the big platform
         console.log("YOU WIN")
     }
 
@@ -250,8 +294,8 @@ function animate() {
 
 }
 
-gameStart();
 animate();
+gameStart();
 
 window.addEventListener('keydown', (e) => {
     e = e || window.event;
@@ -260,11 +304,11 @@ window.addEventListener('keydown', (e) => {
         player.currentSprite = player.sprites.jump
         keys.up.pressed = true
     }
-    if (e.key === 'ArrowLeft') {
+    else if (e.key === 'ArrowLeft') {
         player.currentSprite = player.sprites.run.left
         keys.left.pressed = true
     }
-    if (e.key === 'ArrowRight') {
+    else if (e.key === 'ArrowRight') {
         player.currentSprite = player.sprites.run.right
         keys.right.pressed = true
     }
@@ -282,6 +326,5 @@ window.addEventListener('keyup', (e) => {
     }
     if (e.key === 'ArrowUp') {
         keys.up.pressed = false
-        player.currentSprite = player.sprites.stand
     }
 })

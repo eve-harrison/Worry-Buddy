@@ -9,10 +9,9 @@ backgroundImage.src = './img/ROOM.png'
 let playerIdle = new Image();
 playerIdle.src = './img/playerIdle.png'
 
-let robotImage = new Image();
-robotImage.src = './img/robotTeacher.png'
-
 let frameDelay = 0
+
+let anxietyScore = 0
 
 document.getElementById("scene2").disabled = true
 
@@ -115,7 +114,13 @@ function animate() {
 }
 
 function updateAnxietyScore() {
-    let anxietyScore = 0
+
+    let nextButtonClicked = false;
+    let happyClicked = false;
+    let dontCareClicked = false;
+    let sadClicked = false;
+    let worriedClicked = false;
+    let scaredClicked = false;
 
     const happyButton = document.getElementById("btn1")
     const dontCareButton = document.getElementById("btn2")
@@ -124,26 +129,72 @@ function updateAnxietyScore() {
     const scaredButton = document.getElementById("btn5")
 
     happyButton.addEventListener("click", () => {
-        document.getElementById("anxietyLevel").innerHTML = anxietyScore - 1
-    })
+        happyClicked = true;
+        checkClicks();
+    });
 
     dontCareButton.addEventListener("click", () => {
-        document.getElementById("anxietyLevel").innerHTML = anxietyScore
-    })
+        dontCareClicked = true;
+        checkClicks();
+    });
 
     sadButton.addEventListener("click", () => {
-        document.getElementById("anxietyLevel").innerHTML = anxietyScore + 1
-    })
+        sadClicked = true;
+        checkClicks();
+    });
 
     worriedButton.addEventListener("click", () => {
-        document.getElementById("anxietyLevel").innerHTML = anxietyScore + 2
-    })
+        worriedClicked = true;
+        checkClicks();
+    });
 
     scaredButton.addEventListener("click", () => {
-        document.getElementById("anxietyLevel").innerHTML = anxietyScore + 3
-    })
+        scaredClicked = true;
+        checkClicks();
+    });
 
+    const nextButtons = document.querySelectorAll(".nextSceneButton")
+
+    for (let i = 0; i < nextButtons.length; i++) {
+        nextButtons[i].addEventListener("click", () => {
+            nextButtonClicked = true;
+            checkClicks();
+        });
+    }
+
+    function checkClicks() {
+        if (happyClicked && nextButtonClicked) {
+            anxietyScore -= 1
+            document.getElementById("anxietyLevel").innerHTML = anxietyScore;
+            happyClicked = false;
+            nextButtonClicked = false;
+        }
+        if (dontCareClicked && nextButtonClicked) {
+            document.getElementById("anxietyLevel").innerHTML = anxietyScore;
+            dontCareClicked = false;
+            nextButtonClicked = false;
+        }
+        if (sadClicked && nextButtonClicked) {
+            anxietyScore += 1
+            document.getElementById("anxietyLevel").innerHTML = anxietyScore;
+            sadClicked = false;
+            nextButtonClicked = false;
+        }
+        if (worriedClicked && nextButtonClicked) {
+            anxietyScore += 2
+            document.getElementById("anxietyLevel").innerHTML = anxietyScore;
+            worriedClicked = false;
+            nextButtonClicked = false;
+        }
+        if (scaredClicked && nextButtonClicked) {
+            anxietyScore += 3
+            document.getElementById("anxietyLevel").innerHTML = anxietyScore;
+            scaredClicked = false;
+            nextButtonClicked = false;
+        }
+    }
 }
+
 
 function enableNextButton() {
     updateAnxietyScore()
