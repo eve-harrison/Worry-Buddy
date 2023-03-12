@@ -107,6 +107,7 @@ function writeUpNewSituation(speeds, textLines) {
 
 
 let player = new Player()
+let sprites = []
 
 function animate() {
     requestAnimationFrame(animate)
