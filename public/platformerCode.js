@@ -1,6 +1,7 @@
 const canvas = document.querySelector('canvas')
 const c = canvas.getContext('2d')
 
+
 canvas.width = 1300
 canvas.height = 576
 const gravity = 0.5
@@ -18,6 +19,18 @@ hill.src = './img/greenHillOne.png'
 let tallPlatform = new Image();
 tallPlatform.src = './img/smallPlatform.png'
 
+let redBox = new Image();
+redBox.src = './img/redBox.png'
+
+let pinkBox = new Image();
+pinkBox.src = './img/pinkBox.png'
+
+let greenBox = new Image();
+greenBox.src = './img/greenBox.png'
+
+let single_flag = new Image();
+single_flag.src = './img/flag1.png'
+
 let playerIdle = new Image();
 playerIdle.src = './img/playerIdle.png'
 
@@ -32,6 +45,8 @@ playerJumping.src = './img/playerJumpingRight.png'
 
 let platforms = []
 let backgroundObjects = []
+let mysteryBoxes = []
+
 let keys = {
     up: {
         pressed: false
@@ -102,12 +117,22 @@ class Player {
             this.velocity.y += gravity
     }
 
+    collidesWith(object) {
+        return (
+            this.position.x < object.position.x + object.width &&
+            this.position.x + this.width > object.position.x &&
+            this.position.y < object.position.y + object.height - 100 &&
+            this.position.y + this.height > object.position.y
+        );
+    }
+
 }
 
 let player = new Player()
 
+
 class DrawObject {
-    constructor({ x, y, image }) {
+    constructor({ x, y, image, width, height }) {
         this.position = {
             x: x,
             y: y
@@ -156,15 +181,9 @@ function gameStart() {
     }),
 
     new DrawObject({
-        x: (4 * groundImage.width), y: 225,
-        image: tallPlatform
-    }),
-
-    new DrawObject({
         x: (6 * groundImage.width) + 450, y: 450,
         image: groundImage
     }),
-
 
     new DrawObject({
         x: (7 * groundImage.width) + 750, y: 450,
@@ -227,11 +246,43 @@ function gameStart() {
         image: hill
     })]
 
+
+    mysteryBoxes = [new DrawObject({
+        x: 900, y: 80,
+        // x: 3000, y: 80,
+        image: pinkBox
+    }),
+
+    new DrawObject({
+        x: 5300, y: 80,
+        image: redBox
+    }),
+
+    new DrawObject({
+        x: 6500, y: -40,
+        image: greenBox
+    }),
+
+    new DrawObject({
+        x: 7200, y: 80,
+        image: pinkBox
+    }),
+
+    new DrawObject({
+        x: 8700, y: 80,
+        image: redBox
+    }),
+    new DrawObject({
+        x: 9500, y: 95,
+        image: single_flag
+    })]
+
     scroll = 0
 }
 
+
 function animate() {
-    requestAnimationFrame(animate)
+    const animationId = requestAnimationFrame(animate)
     c.fillStyle = 'white'
     c.fillRect(0, 0, canvas.width, canvas.height)
 
@@ -241,6 +292,10 @@ function animate() {
 
     platforms.forEach(platform => {
         platform.draw()
+    })
+
+    mysteryBoxes.forEach(mysteryBox => {
+        mysteryBox.draw()
     })
 
     player.update()
@@ -261,6 +316,9 @@ function animate() {
             backgroundObjects.forEach((randomOject) => {
                 randomOject.position.x -= player.speed * 0.66
             })
+            mysteryBoxes.forEach((mysteryBox) => {
+                mysteryBox.position.x -= player.speed
+            })
 
         } else if (keys.left.pressed && scroll > 0) {
             scroll += player.speed
@@ -269,6 +327,9 @@ function animate() {
             })
             backgroundObjects.forEach((randomOject) => {
                 randomOject.position.x += player.speed * 0.66
+            })
+            mysteryBoxes.forEach((mysteryBox) => {
+                mysteryBox.position.x += player.speed
             })
         }
     }
@@ -283,7 +344,7 @@ function animate() {
 
     })
 
-    if (scroll < -8200) {  // edge of the last hill when you jump off the big platform
+    if (scroll < -9500) {  // edge of the last hill when you jump off the big platform
         console.log("YOU WIN")
     }
 
@@ -292,10 +353,53 @@ function animate() {
         gameStart()
     }
 
+    for (let i = 0; i < mysteryBoxes.length; i++) {
+        if (player.collidesWith(mysteryBoxes[i])) {
+            console.log("colliding")
+            window.cancelAnimationFrame(animationId)
+            gsap.to('#overlap', {
+                opacity: 1,
+                repeat: 2,
+                yoyo: true,
+                duration: 0.4,
+                onComplete() {
+                    gsap.to('#overlap', {
+                        opacity: 1,
+                        duration: 0.4,
+                        onComplete() {
+                            animateNewScene()
+                            gsap.to('#overlap', {
+                                opacity: 0
+                            })
+                        }
+                    })
+
+                }
+
+            })
+        }
+    }
 }
 
-animate();
-gameStart();
+animate()
+gameStart()
+
+let schoolRoom = new Image();
+schoolRoom.src = './img/schoolBackground.png'
+
+const schoolBackground = new DrawObject({
+    x: -1, y: -1,
+    image: schoolRoom
+})
+
+function animateNewScene() {
+    window.requestAnimationFrame(animateNewScene)
+    console.log("new scene started")
+
+    schoolBackground.draw()
+
+
+}
 
 window.addEventListener('keydown', (e) => {
     e = e || window.event;
@@ -327,4 +431,5 @@ window.addEventListener('keyup', (e) => {
     if (e.key === 'ArrowUp') {
         keys.up.pressed = false
     }
+
 })
