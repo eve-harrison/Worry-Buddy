@@ -1,7 +1,6 @@
 const canvas = document.querySelector('canvas')
 const c = canvas.getContext('2d')
 
-
 canvas.width = 1300
 canvas.height = 576
 const gravity = 0.5
@@ -46,6 +45,7 @@ playerJumping.src = './img/playerJumpingRight.png'
 let platforms = []
 let backgroundObjects = []
 let mysteryBoxes = []
+let flags = []
 
 let keys = {
     up: {
@@ -119,8 +119,8 @@ class Player {
 
     collidesWith(object) {
         return (
-            this.position.x < object.position.x + object.width &&
-            this.position.x + this.width > object.position.x &&
+            this.position.x < object.position.x + object.width - 100 &&
+            this.position.x + this.width - 100 > object.position.x &&
             this.position.y < object.position.y + object.height - 100 &&
             this.position.y + this.height > object.position.y
         );
@@ -130,6 +130,11 @@ class Player {
 
 let player = new Player()
 
+let originalPlayerPosition = {
+    x: player.x,
+    y: player.y
+};
+
 
 class DrawObject {
     constructor({ x, y, image, width, height }) {
@@ -137,18 +142,69 @@ class DrawObject {
             x: x,
             y: y
         }
-        this.image = image
-        this.width = image.width
-        this.height = image.height
+        this.image = image;
+        this.width = width || image.width;
+        this.height = height || image.height;
     }
     draw() {
-        c.drawImage(this.image, this.position.x, this.position.y)
+        c.imageSmoothingEnabled = false
+        c.drawImage(this.image, this.position.x, this.position.y, this.width, this.height);
     }
 }
+
+let scenarioBox_1 = new DrawObject({
+    x: 500,
+    y: 80,
+    image: pinkBox,
+    width: pinkBox.width,
+    height: pinkBox.height
+})
+
+let scenarioBox_2 = new DrawObject({
+    x: 5300,
+    y: 80,
+    image: pinkBox,
+    width: pinkBox.width,
+    height: pinkBox.height
+})
+
+let scenarioBox_3 = new DrawObject({
+    x: 7200,
+    y: 80,
+    image: pinkBox,
+    width: pinkBox.width,
+    height: pinkBox.height
+})
+
+let audioBox = new DrawObject({
+    x: 8700,
+    y: 80,
+    image: redBox,
+    width: redBox.width,
+    height: redBox.height
+})
+
+let visualBox = new DrawObject({
+    x: 6500,
+    y: -40,
+    image: greenBox,
+    width: greenBox.width,
+    height: greenBox.height
+})
+
+let flag = new DrawObject({
+    x: 9500,
+    y: 95,
+    image: single_flag,
+    width: single_flag.width,
+    height: single_flag.height
+})
 
 function gameStart() {
     console.log("game start")
     player = new Player()
+
+    if (minigame.initiated) return
 
     platforms = [new DrawObject({
         x: -1, y: 450,
@@ -246,46 +302,74 @@ function gameStart() {
         image: hill
     })]
 
+    scenarioBox_1 = new DrawObject({
+        x: 500,
+        y: 80,
+        image: pinkBox,
+        width: pinkBox.width,
+        height: pinkBox.height
+    })
 
-    mysteryBoxes = [new DrawObject({
-        x: 900, y: 80,
-        // x: 3000, y: 80,
-        image: pinkBox
-    }),
+    scenarioBox_2 = new DrawObject({
+        x: 5300,
+        y: 80,
+        image: pinkBox,
+        width: pinkBox.width,
+        height: pinkBox.height
+    })
 
-    new DrawObject({
-        x: 5300, y: 80,
-        image: redBox
-    }),
+    scenarioBox_3 = new DrawObject({
+        x: 7200,
+        y: 80,
+        image: pinkBox,
+        width: pinkBox.width,
+        height: pinkBox.height
+    })
 
-    new DrawObject({
-        x: 6500, y: -40,
-        image: greenBox
-    }),
+    audioBox = new DrawObject({
+        x: 8700,
+        y: 80,
+        image: redBox,
+        width: redBox.width,
+        height: redBox.height
+    })
 
-    new DrawObject({
-        x: 7200, y: 80,
-        image: pinkBox
-    }),
+    visualBox = new DrawObject({
+        x: 6500,
+        y: -40,
+        image: greenBox,
+        width: greenBox.width,
+        height: greenBox.height
+    })
 
-    new DrawObject({
-        x: 8700, y: 80,
-        image: redBox
-    }),
-    new DrawObject({
-        x: 9500, y: 95,
-        image: single_flag
-    })]
+    mysteryBoxes.push(scenarioBox_1)
+    mysteryBoxes.push(scenarioBox_2)
+    mysteryBoxes.push(scenarioBox_3)
+    mysteryBoxes.push(audioBox)
+    mysteryBoxes.push(visualBox)
+
+    flag = new DrawObject({
+        x: 9500,
+        y: 95,
+        image: single_flag,
+        width: single_flag.width,
+        height: single_flag.height
+    })
+
+    flags.push(flag)
+
 
     scroll = 0
 }
 
+const minigame = {
+    initiated: false
+}
 
 function animate() {
     const animationId = requestAnimationFrame(animate)
     c.fillStyle = 'white'
     c.fillRect(0, 0, canvas.width, canvas.height)
-
     backgroundObjects.forEach(randomOject => {
         randomOject.draw()
     })
@@ -297,6 +381,8 @@ function animate() {
     mysteryBoxes.forEach(mysteryBox => {
         mysteryBox.draw()
     })
+
+    flag.draw()
 
     player.update()
 
@@ -319,6 +405,9 @@ function animate() {
             mysteryBoxes.forEach((mysteryBox) => {
                 mysteryBox.position.x -= player.speed
             })
+            flags.forEach((flag) => {
+                flag.position.x -= player.speed
+            })
 
         } else if (keys.left.pressed && scroll > 0) {
             scroll += player.speed
@@ -330,6 +419,9 @@ function animate() {
             })
             mysteryBoxes.forEach((mysteryBox) => {
                 mysteryBox.position.x += player.speed
+            })
+            flags.forEach((flag) => {
+                flag.position.x += player.speed
             })
         }
     }
@@ -344,61 +436,218 @@ function animate() {
 
     })
 
-    if (scroll < -9500) {  // edge of the last hill when you jump off the big platform
-        console.log("YOU WIN")
-    }
-
     if (player.position.y > canvas.height) {
         console.log("YOU LOSE")
         gameStart()
     }
 
-    for (let i = 0; i < mysteryBoxes.length; i++) {
-        if (player.collidesWith(mysteryBoxes[i])) {
-            console.log("colliding")
-            window.cancelAnimationFrame(animationId)
-            gsap.to('#overlap', {
-                opacity: 1,
-                repeat: 2,
-                yoyo: true,
-                duration: 0.4,
-                onComplete() {
-                    gsap.to('#overlap', {
-                        opacity: 1,
-                        duration: 0.4,
-                        onComplete() {
-                            animateNewScene()
-                            gsap.to('#overlap', {
-                                opacity: 0
-                            })
-                        }
-                    })
-
-                }
-
-            })
+    if (player.collidesWith(scenarioBox_1)) {
+        console.log("colliding with first scenario")
+    } if (player.collidesWith(scenarioBox_2)) {
+        console.log("colliding with second scenario")
+    } if (player.collidesWith(scenarioBox_3)) {
+        console.log("colliding with third scenario")
+    } if (player.collidesWith(audioBox)) {
+        console.log("colliding with audio game")
+    } if (player.collidesWith(visualBox)) {
+        console.log("colliding with visual game")
+        visualBox.position.x = 0
+        visualBox.position.y = 0
+        originalPlayerPosition = {
+            x: player.x,
+            y: player.y
         }
+        window.cancelAnimationFrame(animationId)
+        minigame.initiated = true
+        gsap.to('#overlap', {
+            opacity: 1,
+            repeat: 2,
+            yoyo: true,
+            duration: 0.4,
+            onComplete() {
+                gsap.to('#overlap', {
+                    opacity: 1,
+                    duration: 0.4,
+                    onComplete() {
+                        beginVisualGame()
+                        gsap.to('#overlap', {
+                            opacity: 0
+                        })
+                    }
+                })
+
+            }
+
+        })
+    } if (player.collidesWith(flag)) {  // edge of the last hill when you jump off the big platform
+        console.log("YOU WIN")
     }
 }
 
 animate()
 gameStart()
 
-let schoolRoom = new Image();
-schoolRoom.src = './img/schoolBackground.png'
+function backToOriginalPosition() {
+    gsap.to(player, {
+        x: originalPlayerPosition.x,
+        y: originalPlayerPosition.y,
+        duration: 1
+    });
+}
 
-const schoolBackground = new DrawObject({
+const visualBackground = new Image();
+visualBackground.src = './img/visualGameBackground.png'
+
+const nextBackground = new DrawObject({
     x: -1, y: -1,
-    image: schoolRoom
+    image: visualBackground,
+    width: 1300,
+    height: 576
 })
 
-function animateNewScene() {
-    window.requestAnimationFrame(animateNewScene)
-    console.log("new scene started")
+class Sprite {
+    constructor({ x, y, width, height, image, frames }) {
+        this.position = {
+            x: x,
+            y: y
+        }
+        this.width = width
+        this.height = height
+        this.image = image
+        this.frames = frames
+    }
 
-    schoolBackground.draw()
+    draw() {
+        c.imageSmoothingEnabled = false
+        c.drawImage(this.image,
+            32 * this.frames,
+            0,
+            32,
+            32,
+            this.position.x,
+            this.position.y,
+            this.width,
+            this.height)
+    }
+    update() {
+        if (frameDelay == 3) {
+            this.frames++
+            frameDelay = 0
+        } else {
+            frameDelay++;
+        }
+        if (this.frames > 4) this.frames = 0
+        this.draw()
+    }
+}
+const playerOne = new Sprite({
+    x: 200,
+    y: 150,
+    width: 300,
+    height: 300,
+    image: playerIdle,
+    frames: 4
+})
+
+function beginVisualGame() {
+    nextBackground.draw()
+    let score = 0;
+
+    const redImages = [
+        './img/visualGameImages/apple.png',
+        './img/visualGameImages/cherry.png',
+        // './img/visualGameImages/redLollipop.png',
+        // './img/visualGameImages/strawberry.png',
+        // './img/visualGameImages/redCircle.png'
+    ];
+
+    const notRedImages = [
+        './img/visualGameImages/greenLollipop.png',
+        './img/visualGameImages/purpleLollipop.png',
+        // './img/visualGameImages/milk.png',
+        // './img/visualGameImages/cheese.png',
+        // './img/visualGameImages/greenCircle.png',
+        // './img/visualGameImages/purpleCircle.png',
+        // './img/visualGameImages/yellowCircle.png'
+    ];
+
+    function getRandomPosition(min, max) {
+        return Math.floor(Math.random() * (max - min) + min);
+    }
+
+    function checkOverlap(element, otherElements) {
+        const rect1 = element.getBoundingClientRect();
+        for (let i = 0; i < otherElements.length; i++) {
+            const rect2 = otherElements[i].getBoundingClientRect();
+            if (
+                rect1.left < rect2.right &&
+                rect1.right > rect2.left &&
+                rect1.top < rect2.bottom &&
+                rect1.bottom > rect2.top
+            ) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    const reds = [];
+    const notReds = [];
 
 
+    for (let i = 0; i < redImages.length; i++) {
+        const red = document.createElement('img');
+        red.setAttribute('class', 'clickable-image');
+        red.setAttribute('src', redImages[i]);
+        red.style.left = getRandomPosition(400, canvas.width - 300) + 'px';
+        red.style.top = getRandomPosition(400, canvas.height - 300) + 'px';
+        reds.push(red);
+        document.body.appendChild(red);
+    }
+
+    for (let i = 0; i < notRedImages.length; i++) {
+        const notRed = document.createElement('img');
+        notRed.setAttribute('class', 'non-clickable-image');
+        notRed.setAttribute('src', notRedImages[i]);
+        notRed.style.left = getRandomPosition(400, canvas.width - 300) + 'px';
+        notRed.style.top = getRandomPosition(400, canvas.height - 300) + 'px';
+        notReds.push(notRed);
+        document.body.appendChild(notRed);
+    }
+
+    reds.forEach(red => {
+        while (checkOverlap(red, notReds)) {
+            red.style.left = getRandomPosition(400, canvas.width - 300) + 'px';
+            red.style.top = getRandomPosition(400, canvas.height - 300) + 'px';
+        }
+        red.addEventListener('click', () => {
+            red.style.display = 'none';
+            score++;
+            console.log(score);
+            if (score === redImages.length) {
+                const nextButton = document.createElement('button');
+                nextButton.setAttribute('class', 'next-button');
+                nextButton.innerText = 'Finish';
+                document.body.appendChild(nextButton);
+                nextButton.addEventListener('click', () => {
+                    gsap.to('#overlap', {
+                        opacity: 1,
+                        onComplete: () => {
+                            nextButton.setAttribute('hidden', true);
+                            notReds.forEach(notRed => {
+                                notRed.setAttribute('hidden', true)
+                            })
+                            animate()
+                            backToOriginalPosition()
+                            gsap.to('#overlap', {
+                                opacity: 0
+                            })
+                        }
+                    })
+                })
+            }
+        });
+    });
 }
 
 window.addEventListener('keydown', (e) => {
