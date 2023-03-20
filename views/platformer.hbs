@@ -31,15 +31,37 @@
         cursor: pointer;
         border-radius: 12px;
     }
+
+    .text span {
+        opacity: 0;
+    }
+
+    .text span.revealed {
+        opacity: 1;
+    }
+
+    .text {
+        font-size: 1.5vw;
+        word-spacing: 0.2em;
+        margin: 0 auto;
+        background: #fff;
+        padding: 1em;
+        position: relative;
+        line-height: 1.2em;
+        font-family: 'Courier New', monospace;
+        font-weight: bold;
+    }
 </style>
 
 
 <div style="display: inline-block; position:relative">
     <div id="userInterface">
         <div id="overlap" style="background-color:white;width:1300px;height:576px;position:absolute;
-    opacity:0; pointer-events:none;z-index: 10;"></div>
+    opacity:0; pointer-events:none;z-index: 10;">
+        </div>
     </div>
-    <canvas></canvas>
+</div>
+<canvas></canvas>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"

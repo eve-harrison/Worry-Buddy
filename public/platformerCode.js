@@ -5,6 +5,7 @@ canvas.width = 1300
 canvas.height = 576
 const gravity = 0.5
 var frameDelay = 0
+let foodClickCount = 0
 
 let backgroundImage = new Image();
 backgroundImage.src = './img/bestBackground.jpg'
@@ -33,6 +34,9 @@ single_flag.src = './img/flag1.png'
 let playerIdle = new Image();
 playerIdle.src = './img/playerIdle.png'
 
+let playerIdleOtherWay = new Image();
+playerIdleOtherWay.src = './img/playerIdleOtherWay.png'
+
 let playerRunningRight = new Image();
 playerRunningRight.src = './img/playerRunningRight.png'
 
@@ -46,6 +50,8 @@ let platforms = []
 let backgroundObjects = []
 let mysteryBoxes = []
 let flags = []
+let differentFoodTypes = []
+let differentDrinkTypes = []
 
 let keys = {
     up: {
@@ -137,7 +143,7 @@ let originalPlayerPosition = {
 
 
 class DrawObject {
-    constructor({ x, y, image, width, height }) {
+    constructor({ x, y, image, width, height, clickable }) {
         this.position = {
             x: x,
             y: y
@@ -145,10 +151,30 @@ class DrawObject {
         this.image = image;
         this.width = width || image.width;
         this.height = height || image.height;
+        this.clickable = clickable || false;
+        if (this.clickable) {
+            this.registerClickListener()
+        }
     }
     draw() {
         c.imageSmoothingEnabled = false
         c.drawImage(this.image, this.position.x, this.position.y, this.width, this.height);
+    }
+    registerClickListener() {
+        canvas.addEventListener('click', (event) => {
+            const canvasBounds = canvas.getBoundingClientRect();
+            const mouseX = event.clientX - canvasBounds.left;
+            const mouseY = event.clientY - canvasBounds.top;
+            if (mouseX >= this.position.x && mouseX <= this.position.x + this.width && mouseY >= this.position.y && mouseY <= this.position.y + this.height) {
+                this.move()
+                foodClickCount++
+            }
+        });
+    }
+    move() {
+        this.position.x = player.position.x + 200
+        this.position.y = player.position.y + 130
+        this.draw();
     }
 }
 
@@ -303,7 +329,7 @@ function gameStart() {
     })]
 
     scenarioBox_1 = new DrawObject({
-        x: 500,
+        x: 3500,
         y: 80,
         image: pinkBox,
         width: pinkBox.width,
@@ -311,7 +337,7 @@ function gameStart() {
     })
 
     scenarioBox_2 = new DrawObject({
-        x: 5300,
+        x: 500,
         y: 80,
         image: pinkBox,
         width: pinkBox.width,
@@ -370,6 +396,7 @@ function animate() {
     const animationId = requestAnimationFrame(animate)
     c.fillStyle = 'white'
     c.fillRect(0, 0, canvas.width, canvas.height)
+
     backgroundObjects.forEach(randomOject => {
         randomOject.draw()
     })
@@ -443,8 +470,62 @@ function animate() {
 
     if (player.collidesWith(scenarioBox_1)) {
         console.log("colliding with first scenario")
+        scenarioBox_1.position.x = 0
+        scenarioBox_1.position.y = 0
+        originalPlayerPosition = {
+            x: player.x,
+            y: player.y
+        }
+        window.cancelAnimationFrame(animationId)
+        minigame.initiated = true
+        gsap.to('#overlap', {
+            opacity: 1,
+            repeat: 2,
+            yoyo: true,
+            duration: 0.4,
+            onComplete() {
+                gsap.to('#overlap', {
+                    opacity: 1,
+                    duration: 0.4,
+                    onComplete() {
+                        beginFirstScenario()
+                        console.log("beginning first scenario")
+                        gsap.to('#overlap', {
+                            opacity: 0
+                        })
+                    }
+                })
+            }
+        })
     } if (player.collidesWith(scenarioBox_2)) {
         console.log("colliding with second scenario")
+        scenarioBox_2.position.x = 0
+        scenarioBox_2.position.y = 0
+        originalPlayerPosition = {
+            x: player.x,
+            y: player.y
+        }
+        window.cancelAnimationFrame(animationId)
+        minigame.initiated = true
+        gsap.to('#overlap', {
+            opacity: 1,
+            repeat: 2,
+            yoyo: true,
+            duration: 0.4,
+            onComplete() {
+                gsap.to('#overlap', {
+                    opacity: 1,
+                    duration: 0.4,
+                    onComplete() {
+                        beginSecondScenario()
+                        console.log("beginning second scenario")
+                        gsap.to('#overlap', {
+                            opacity: 0
+                        })
+                    }
+                })
+            }
+        })
     } if (player.collidesWith(scenarioBox_3)) {
         console.log("colliding with third scenario")
     } if (player.collidesWith(audioBox)) {
@@ -486,6 +567,7 @@ function animate() {
 
 animate()
 gameStart()
+
 
 function backToOriginalPosition() {
     gsap.to(player, {
@@ -540,14 +622,6 @@ class Sprite {
         this.draw()
     }
 }
-const playerOne = new Sprite({
-    x: 200,
-    y: 150,
-    width: 300,
-    height: 300,
-    image: playerIdle,
-    frames: 4
-})
 
 function beginVisualGame() {
     nextBackground.draw()
@@ -649,6 +723,243 @@ function beginVisualGame() {
         });
     });
 }
+
+const playerOne = new Sprite({
+    x: 600,
+    y: 250,
+    width: 150,
+    height: 150,
+    image: playerIdle,
+    frames: 4
+})
+
+let schoolRoomImage = new Image();
+schoolRoomImage.src = './img/schoolRoom.png'
+
+const schoolRoomBackground = new DrawObject({
+    x: 310, y: -1,
+    image: schoolRoomImage,
+    width: 700,
+    height: 576
+
+})
+
+const donutImage = new Image();
+donutImage.src = './img/visualGameImages/donut.png'
+
+const donut = new DrawObject({
+    x: 900, y: 120,
+    image: donutImage,
+    width: 90,
+    height: 90,
+    clickable: true
+})
+
+const appleImage = new Image();
+appleImage.src = './img/visualGameImages/apple.png'
+
+const apple = new DrawObject({
+    x: 500, y: 400,
+    image: appleImage,
+    width: 100,
+    height: 100,
+    clickable: true
+})
+
+const milkImage = new Image();
+milkImage.src = './img/visualGameImages/milk.png'
+
+const milk = new DrawObject({
+    x: 350, y: 360,
+    image: milkImage,
+    width: 70,
+    height: 90,
+    clickable: true
+})
+
+const colaImage = new Image();
+colaImage.src = './img/visualGameImages/cola.png'
+
+const cola = new DrawObject({
+    x: 470, y: 50,
+    image: colaImage,
+    width: 60,
+    height: 70,
+    clickable: true
+})
+
+const breadImage = new Image();
+breadImage.src = './img/visualGameImages/bread.png'
+
+const bread = new DrawObject({
+    x: 540, y: 400,
+    image: breadImage,
+    width: 70,
+    height: 70,
+    clickable: true
+})
+
+const cupcakeImage = new Image();
+cupcakeImage.src = './img/visualGameImages/cupcake.png'
+
+const cupcake = new DrawObject({
+    x: 850, y: 100,
+    image: cupcakeImage,
+    width: 100,
+    height: 100,
+    clickable: true
+})
+
+differentFoodTypes.push(bread)
+differentFoodTypes.push(apple)
+differentFoodTypes.push(cupcake)
+differentFoodTypes.push(donut)
+differentFoodTypes.push(milk)
+differentFoodTypes.push(cola)
+
+function createTextDiv(text, width, height, top, left) {
+    var div = document.createElement('div');
+    div.style.backgroundColor = 'white';
+    div.style.width = width
+    div.style.height = height
+    div.textContent = text
+    div.style.position = 'absolute'
+    div.style.top = top
+    div.style.left = left
+    div.style.fontFamily = 'Courier New, monospace'
+    div.style.fontWeight = 'bold'
+    div.style.fontSize = '1.25vw'
+    div.style.paddingTop = '30px'
+    div.style.textAlign = 'center'
+    return div;
+}
+
+var foodText = 'What food should Sam eat for lunch today? (Please choose 3 items)';
+var foodDiv = createTextDiv(foodText, '250px', '100px', '530px', '630px');
+let textBox = []
+textBox.push(foodDiv)
+
+
+function beginFirstScenario() {
+    requestAnimationFrame(beginFirstScenario)
+    schoolRoomBackground.draw()
+
+    differentFoodTypes.forEach(food => {
+        food.draw()
+    })
+
+    textBox.forEach(box => {
+        document.body.appendChild(box);
+    })
+
+    playerOne.update()
+
+    if (foodClickCount >= 3) {
+        cancelAnimationFrame(beginFirstScenario)
+        gsap.to('#overlap', {
+            opacity: 1,
+            onComplete: () => {
+                foodDiv.setAttribute('hidden', true);
+                animate()
+                console.log("back to main screen")
+                gsap.to('#overlap', {
+                    opacity: 0
+                })
+            }
+        })
+    }
+
+}
+
+let bedroomImage = new Image();
+bedroomImage.src = './img/ROOM.png'
+
+const bedroomBackground = new DrawObject({
+    x: 310, y: -1,
+    image: bedroomImage,
+    width: 700,
+    height: 576
+
+})
+
+const playerTwo = new Sprite({
+    x: 750,
+    y: 250,
+    width: 150,
+    height: 150,
+    image: playerIdle,
+    frames: 4
+})
+
+var afterSchoolText = 'School is over and the weather is sunny! What should Sam do this evening? a.) Go for a walk b.) Go to sleep c.) Call a friend';
+var afterSchoolDiv = createTextDiv(afterSchoolText, '450px', '150px', '130px', '600px');
+let textBox2 = []
+textBox2.push(afterSchoolDiv)
+
+// document.querySelectorAll('.optionButton').forEach((button) => {
+//     button.addEventListener('click', () => {
+//         console.log("clicked")
+//         let nextButton = document.createElement('button');
+//         nextButton.setAttribute('class', 'next-button');
+//         nextButton.innerText = 'Finish';
+//         document.body.appendChild(nextButton);
+//         nextButton.addEventListener('click', () => {
+//             gsap.to('#overlap', {
+//                 opacity: 1,
+//                 onComplete: () => {
+//                     nextButton.setAttribute('hidden', true);
+//                     animate()
+//                     backToOriginalPosition()
+//                     gsap.to('#overlap', {
+//                         opacity: 0
+//                     })
+//                 }
+//             })
+//         })
+//     })
+// })
+
+// function createButton(text, top, left) {
+//     var button = document.createElement('button');
+//     button.setAttribute('class', 'optionButton');
+//     button.style.width = '120px'
+//     button.style.height = '100px'
+//     button.textContent = text
+//     button.style.position = 'absolute'
+//     button.style.top = top
+//     button.style.left = left
+//     button.style.fontFamily = 'Courier New, monospace'
+//     button.style.fontWeight = 'bold'
+//     button.style.fontSize = '1.1vw'
+//     button.style.cursor = 'pointer'
+//     return button
+// }
+
+// var walkButton = createButton(' Walk ', '570px', '630px')
+// var sleepButton = createButton(' Sleep ', '570px', '750px')
+// var friendButton = createButton(' Call a friend ', '570px', '870px')
+
+// let buttonArray = []
+// buttonArray.push(walkButton)
+// buttonArray.push(sleepButton)
+// buttonArray.push(friendButton)
+
+function beginSecondScenario() {
+    requestAnimationFrame(beginSecondScenario)
+    bedroomBackground.draw()
+
+    // buttonArray.forEach(button => {
+    //     document.body.appendChild(button);
+    // })
+
+    textBox2.forEach(box => {
+        document.body.appendChild(box);
+    })
+
+    playerTwo.update()
+}
+
+
 
 window.addEventListener('keydown', (e) => {
     e = e || window.event;
