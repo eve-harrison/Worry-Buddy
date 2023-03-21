@@ -62,15 +62,18 @@
     }
 
     .next-button {
+        font-size: 24px;
+        background-color: #2e8415;
+        border: none;
+        border-radius: 5px;
+        color: white;
+        padding: 10px 20px;
+        text-align: center;
+        cursor: pointer;
+        font-family: 'Comic Sans MS', cursive, sans-serif;
         position: fixed;
         bottom: 150px;
         left: 1200px;
-        color: white;
-        background-color: green;
-        font-weight: bold;
-        padding: 20px;
-        cursor: pointer;
-        border-radius: 12px;
     }
 
     canvas {
@@ -84,38 +87,38 @@
     #optionBar,
     #schoolOptionBar {
         position: absolute;
-        bottom: 93px;
+        bottom: 0;
         left: 500px;
         height: 100px;
-        background-color: white;
         z-index: 10;
         margin: 0;
         padding: 0;
-        border: 4px black solid;
         display: flex;
     }
 
-    #buttonContainer {
+    #buttonContainer,
+    #schoolButtonContainer {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
     }
 
     .optionButton,
-    .schoolOptionBar {
+    .schoolOptionButton {
         cursor: pointer;
         font-size: 18px;
         font-family: 'Courier New', Courier, monospace;
         font-weight: bold;
         border-right: 4px black solid;
+        padding: 10px;
     }
 
     .optionButton:hover,
-    .schoolOptionBar:hover {
+    .schoolOptionButton:hover {
         background-color: #ccc;
     }
 
     .optionButton:active,
-    .schoolOptionBar:active {
+    .schoolOptionButton:active {
         background-color: #969595;
     }
 
@@ -196,7 +199,8 @@
         cursor: pointer;
         font-family: 'Comic Sans MS', cursive, sans-serif;
         margin-top: 80px;
-        margin-left: 40px;
+        margin-left: 100px;
+
     }
 
     #welcome {
@@ -273,16 +277,16 @@
 </div>
 <div id="optionBar" style="display:none;">
     <div id="buttonContainer">
-        <button class="optionButton"> (a.)Walk</button>
-        <button class="optionButton"> (b.)Sleep</button>
-        <button class="optionButton"> (c.)Call a friend</button>
+        <button class="optionButton"> Walk</button>
+        <button class="optionButton"> Sleep</button>
+        <button class="optionButton"> Call a friend</button>
     </div>
 </div>
 <div id="schoolOptionBar" style="display:none;">
-    <div id="buttonContainer">
-        <button class="optionButton"> Talk to friends</button>
-        <button class="optionButton"> Draw a picture</button>
-        <button class="optionButton"> Listen to Music</button>
+    <div id="schoolButtonContainer">
+        <button class="schoolOptionButton"> Talk to friends</button>
+        <button class="schoolOptionButton"> Draw a picture</button>
+        <button class="schoolOptionButton"> Listen to Music</button>
     </div>
 </div>
 <div id="audioGameDiv" style="display: none; justify-content:center; align-items:center">
