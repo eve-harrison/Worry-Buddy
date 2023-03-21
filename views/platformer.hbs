@@ -1,7 +1,7 @@
 <style>
     body {
         margin: 0%;
-        background-color: white;
+        background-color: black;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -32,37 +32,159 @@
         border-radius: 12px;
     }
 
-    .text span {
-        opacity: 0;
-    }
-
-    .text span.revealed {
-        opacity: 1;
-    }
-
-    .text {
-        font-size: 1.5vw;
-        word-spacing: 0.2em;
-        margin: 0 auto;
-        background: #fff;
-        padding: 1em;
+    canvas {
         position: relative;
-        line-height: 1.2em;
-        font-family: 'Courier New', monospace;
+        display: block;
+        margin: 0;
+        padding: 0;
+        border: none;
+    }
+
+    #optionBar {
+        position: absolute;
+        bottom: 93px;
+        left: 500px;
+        height: 100px;
+        background-color: white;
+        z-index: 10;
+        margin: 0;
+        padding: 0;
+        border: 4px black solid;
+        display: flex;
+    }
+
+    #buttonContainer {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .optionButton {
+        cursor: pointer;
+        font-size: 18px;
+        font-family: 'Courier New', Courier, monospace;
         font-weight: bold;
+        border-right: 4px black solid;
+    }
+
+    .optionButton:hover {
+        background-color: #ccc;
+    }
+
+    #audioGameDiv {
+        position: absolute;
+        width: 500px;
+        height: 500px;
+        background-color: white;
+        z-index: 10;
+    }
+
+    .animal {
+        height: 100px;
+        width: 100px;
+        cursor: pointer;
+        padding: 10px 20px;
+    }
+
+    .animal:active {
+        box-shadow: 0 5px #666;
+        transform: translateY(4px);
+    }
+
+    .animalButton {
+        font-size: 24px;
+        background-color: #45c61e;
+        border: none;
+        border-radius: 5px;
+        color: white;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        transition-duration: 0.4s;
+        cursor: pointer;
+        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+        font-family: 'Comic Sans MS', cursive, sans-serif;
+    }
+
+    .animalButton:hover {
+        background-color: #32CD32;
+        color: white;
+    }
+
+    .animalButton:active {
+        background-color: #228B22;
+        box-shadow: 0 5px #666;
+        transform: translateY(4px);
+    }
+
+    #selectAnimal {
+        font-size: 18px;
+        color: #333;
+        font-family: 'Comic Sans MS', cursive, sans-serif;
+        line-height: 1.5;
+        margin-bottom: 20px;
+    }
+
+    #selectedAnimal {
+        font-size: 30px;
+        color: #333;
+        font-family: 'Comic Sans MS', cursive, sans-serif;
+        line-height: 1.5;
+        margin-bottom: 20px;
+        margin-left: 100px;
+        margin-top: 100px;
+    }
+
+    .decisionButton {
+        font-size: 24px;
+        background-color: #2e8415;
+        border: none;
+        border-radius: 5px;
+        color: white;
+        padding: 10px 20px;
+        text-align: center;
+        display: inline-block;
+        cursor: pointer;
+        font-family: 'Comic Sans MS', cursive, sans-serif;
+        margin-top: 80px;
+        margin-left: 40px;
     }
 </style>
 
 
-<div style="display: inline-block; position:relative">
-    <div id="userInterface">
-        <div id="overlap" style="background-color:white;width:1300px;height:576px;position:absolute;
-    opacity:0; pointer-events:none;z-index: 10;">
-        </div>
-    </div>
+<div id="overlap" style="background-color:white;width:1300px;height:576px;position:absolute;
+    opacity:0; pointer-events:none;z-index:10;">
 </div>
 <canvas></canvas>
+<div id="optionBar" style="display:none;">
+    <div id="buttonContainer">
+        <button class="optionButton"> (a.)Walk</button>
+        <button class="optionButton"> (b.)Sleep</button>
+        <button class="optionButton"> (c.)Call a friend</button>
+    </div>
 </div>
+<div id="audioGameDiv" style="display: none; justify-content:center; align-items:center">
+    <div id="animalButtonsDiv">
+        <button id="catButton" class="animalButton">Play Sound</button>
+        <button id="frogButton" class="animalButton">Play Sound</button>
+        <button id="cowButton" class="animalButton">Play Sound</button>
+    </div>
+    <div id="animal-container">
+        <p id="selectAnimal">Select the animal you heard:</p>
+        <img src="./img/audioGameData/cat.png" alt="Cat" id="cat" class="animal">
+        <img src="./img/audioGameData/chicken.png" alt="Chicken" id="chicken" class="animal">
+        <img src="./img/audioGameData/fox.png" alt="Fox" id="fox" class="animal">
+        <img src="./img/audioGameData/frog.png" alt="Frog" id="frog" class="animal">
+        <img src="./img/audioGameData/pig.png" alt="Pig" id="pig" class="animal">
+        <img src="./img/audioGameData/cow.png" alt="Cow" id="cow" class="animal">
+    </div>
+    <p id="selectedAnimal"></p>
+    <div id="confirmSelection" style="display:none;">
+        <button id="noButton" class="decisionButton"> Play again </button>
+        <button id="yesButton" class="decisionButton"> Yes </button>
+    </div>
+</div>
+
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"
     integrity="sha512-H6cPm97FAsgIKmlBA4s774vqoN24V5gSQL4yBTDOY2su2DeXZVhQPxFK4P6GPdnZqM9fg1G3cMv5wD7e6cFLZQ=="

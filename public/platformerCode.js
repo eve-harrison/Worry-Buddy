@@ -6,6 +6,7 @@ canvas.height = 576
 const gravity = 0.5
 var frameDelay = 0
 let foodClickCount = 0
+let selectedAnAnimalCount = 0
 
 let backgroundImage = new Image();
 backgroundImage.src = './img/bestBackground.jpg'
@@ -337,7 +338,7 @@ function gameStart() {
     })
 
     scenarioBox_2 = new DrawObject({
-        x: 500,
+        x: 5300,
         y: 80,
         image: pinkBox,
         width: pinkBox.width,
@@ -353,7 +354,8 @@ function gameStart() {
     })
 
     audioBox = new DrawObject({
-        x: 8700,
+        x: 500,
+        // x: 8700,
         y: 80,
         image: redBox,
         width: redBox.width,
@@ -530,6 +532,34 @@ function animate() {
         console.log("colliding with third scenario")
     } if (player.collidesWith(audioBox)) {
         console.log("colliding with audio game")
+        audioBox.position.x = 0
+        audioBox.position.y = 0
+        originalPlayerPosition = {
+            x: player.x,
+            y: player.y
+        }
+        window.cancelAnimationFrame(animationId)
+        minigame.initiated = true
+        gsap.to('#overlap', {
+            opacity: 1,
+            repeat: 2,
+            yoyo: true,
+            duration: 0.4,
+            onComplete() {
+                gsap.to('#overlap', {
+                    opacity: 1,
+                    duration: 0.4,
+                    onComplete() {
+                        beginAudioGame()
+                        gsap.to('#overlap', {
+                            opacity: 0
+                        })
+                    }
+                })
+
+            }
+
+        })
     } if (player.collidesWith(visualBox)) {
         console.log("colliding with visual game")
         visualBox.position.x = 0
@@ -896,61 +926,43 @@ var afterSchoolDiv = createTextDiv(afterSchoolText, '450px', '150px', '130px', '
 let textBox2 = []
 textBox2.push(afterSchoolDiv)
 
-// document.querySelectorAll('.optionButton').forEach((button) => {
-//     button.addEventListener('click', () => {
-//         console.log("clicked")
-//         let nextButton = document.createElement('button');
-//         nextButton.setAttribute('class', 'next-button');
-//         nextButton.innerText = 'Finish';
-//         document.body.appendChild(nextButton);
-//         nextButton.addEventListener('click', () => {
-//             gsap.to('#overlap', {
-//                 opacity: 1,
-//                 onComplete: () => {
-//                     nextButton.setAttribute('hidden', true);
-//                     animate()
-//                     backToOriginalPosition()
-//                     gsap.to('#overlap', {
-//                         opacity: 0
-//                     })
-//                 }
-//             })
-//         })
-//     })
-// })
-
-// function createButton(text, top, left) {
-//     var button = document.createElement('button');
-//     button.setAttribute('class', 'optionButton');
-//     button.style.width = '120px'
-//     button.style.height = '100px'
-//     button.textContent = text
-//     button.style.position = 'absolute'
-//     button.style.top = top
-//     button.style.left = left
-//     button.style.fontFamily = 'Courier New, monospace'
-//     button.style.fontWeight = 'bold'
-//     button.style.fontSize = '1.1vw'
-//     button.style.cursor = 'pointer'
-//     return button
-// }
-
-// var walkButton = createButton(' Walk ', '570px', '630px')
-// var sleepButton = createButton(' Sleep ', '570px', '750px')
-// var friendButton = createButton(' Call a friend ', '570px', '870px')
-
-// let buttonArray = []
-// buttonArray.push(walkButton)
-// buttonArray.push(sleepButton)
-// buttonArray.push(friendButton)
+document.querySelectorAll('.optionButton').forEach((button) => {
+    button.addEventListener('click', () => {
+        console.log("clicked")
+        let nextButton = document.createElement('button');
+        nextButton.setAttribute('class', 'next-button');
+        nextButton.innerText = 'Finish';
+        document.body.appendChild(nextButton);
+        nextButton.addEventListener('click', () => {
+            gsap.to('#overlap', {
+                opacity: 1,
+                onComplete: () => {
+                    cancelAnimationFrame(beginSecondScenario)
+                    nextButton.setAttribute('hidden', true);
+                    document.querySelectorAll('.optionButton').forEach((button) => {
+                        button.setAttribute('hidden', true)
+                    })
+                    textBox2.forEach(box => {
+                        box.setAttribute('hidden', true)
+                    })
+                    document.getElementById('optionBar').style.display = 'none'
+                    animate()
+                    backToOriginalPosition()
+                    console.log('ya')
+                    gsap.to('#overlap', {
+                        opacity: 0
+                    })
+                }
+            })
+        })
+    })
+})
 
 function beginSecondScenario() {
     requestAnimationFrame(beginSecondScenario)
     bedroomBackground.draw()
 
-    // buttonArray.forEach(button => {
-    //     document.body.appendChild(button);
-    // })
+    document.getElementById('optionBar').style.display = 'block'
 
     textBox2.forEach(box => {
         document.body.appendChild(box);
@@ -958,6 +970,122 @@ function beginSecondScenario() {
 
     playerTwo.update()
 }
+
+document.getElementById('noButton').addEventListener('click', () => {
+    document.getElementById('animalButtonsDiv').style.display = 'block'
+    document.getElementById('animal-container').style.display = 'block'
+    document.getElementById('confirmSelection').style.display = 'none'
+    document.getElementById('selectedAnimal').style.display = 'none'
+})
+
+document.getElementById('yesButton').addEventListener('click', () => {
+    document.getElementById('animalButtonsDiv').style.display = 'block'
+    document.getElementById('animal-container').style.display = 'block'
+    document.getElementById('confirmSelection').style.display = 'none'
+    document.getElementById('selectedAnimal').style.display = 'none'
+
+    const audioGame = document.getElementById('audioGameDiv')
+
+    selectedAnAnimalCount++
+    console.log(selectedAnAnimalCount)
+
+    if (selectedAnAnimalCount >= 3) {
+        let nextButton = document.createElement('button');
+        nextButton.setAttribute('class', 'next-button');
+        nextButton.innerText = 'Finish';
+        document.body.appendChild(nextButton);
+        nextButton.addEventListener('click', () => {
+            gsap.to('#overlap', {
+                opacity: 1,
+                onComplete: () => {
+                    nextButton.setAttribute('hidden', true);
+                    audioGame.setAttribute('hidden', true)
+                    animate()
+                    backToOriginalPosition()
+                    console.log('ya')
+                    gsap.to('#overlap', {
+                        opacity: 0
+                    })
+                }
+            })
+        })
+    }
+
+    console.log("THIS IS WHERE YOU WILL LOG THE SCORE EVENTUALLY")
+})
+
+
+function beginAudioGame() {
+    console.log("beginning audio game")
+
+    document.getElementById('audioGameDiv').style.display = 'block'
+
+    const audio1 = new Audio('./img/audioGameData/catAudio.mp3');
+    const audio2 = new Audio('./img/audioGameData/frogAudio.mp3');
+    const audio3 = new Audio('./img/audioGameData/cowAudio.mp3');
+
+    const catButton = document.getElementById('catButton');
+    const frogButton = document.getElementById('frogButton');
+    const cowButton = document.getElementById('cowButton');
+
+    const cat = document.getElementById('cat');
+    const cow = document.getElementById('cow');
+    const frog = document.getElementById('frog');
+
+    const animalContainer = document.getElementById('animal-container');
+    let selectedAnimal = null;
+    let isAnimalSelected = false;
+
+    catButton.addEventListener('click', function () {
+        audio1.play();
+        animalContainer.style.display = 'block';
+    });
+
+    frogButton.addEventListener('click', function () {
+        audio2.play();
+        animalContainer.style.display = 'block';
+    });
+
+    cowButton.addEventListener('click', function () {
+        audio3.play();
+        animalContainer.style.display = 'block';
+    });
+
+    cat.addEventListener('click', function () {
+        selectedAnimal = 'cat';
+        isAnimalSelected = true;
+    });
+
+    cow.addEventListener('click', function () {
+        selectedAnimal = 'cow';
+        isAnimalSelected = true;
+    });
+
+    frog.addEventListener('click', function () {
+        selectedAnimal = 'frog';
+        isAnimalSelected = true;
+    });
+
+    function checkAnimalSelection() {
+        if (isAnimalSelected) {
+            console.log('Selected animal:', selectedAnimal);
+            selectedAnimal = null;
+            isAnimalSelected = false;
+            animalContainer.style.display = 'none';
+        }
+    }
+
+    animalContainer.addEventListener('click', function (event) {
+        const clickedElement = event.target;
+        if (clickedElement.tagName === 'IMG') {
+            document.getElementById('animalButtonsDiv').style.display = 'none'
+            document.getElementById('confirmSelection').style.display = 'block'
+            document.getElementById('selectedAnimal').innerHTML = 'You selected : ' + selectedAnimal
+            checkAnimalSelection();
+        }
+    })
+}
+
 
 
 
