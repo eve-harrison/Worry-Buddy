@@ -5,15 +5,17 @@ playButton.addEventListener('click', () => {
     welcomePlayer.style.display = 'none'
 });
 
+
 const canvas = document.querySelector('canvas')
 const c = canvas.getContext('2d')
 
 canvas.width = 1300
 canvas.height = 576
 const gravity = 0.5
-var frameDelay = 0
 let foodClickCount = 0
 let selectedAnAnimalCount = 0
+let frameDelay = 0
+let scenarioAnimationId
 
 let score = 0
 
@@ -25,9 +27,6 @@ groundImage.src = './img/bigPlatform.png'
 
 let hill = new Image();
 hill.src = './img/greenHillOne.png'
-
-let tallPlatform = new Image();
-tallPlatform.src = './img/smallPlatform.png'
 
 let redBox = new Image();
 redBox.src = './img/redBox.png'
@@ -101,6 +100,7 @@ class Player {
         }
 
         this.currentSprite = this.sprites.stand
+        this.frameDelay = 3;
     }
 
     draw() {
@@ -117,11 +117,11 @@ class Player {
     }
 
     update() {
-        if (frameDelay == 3) {
-            this.frames++
-            frameDelay = 0
+        if (this.frameDelay <= 0) {
+            this.frames++;
+            this.frameDelay = 3;
         } else {
-            frameDelay++;
+            this.frameDelay--;
         }
 
         if (this.frames > 4) this.frames = 0
@@ -145,12 +145,6 @@ class Player {
 }
 
 let player = new Player()
-
-let originalPlayerPosition = {
-    x: player.x,
-    y: player.y
-};
-
 
 class DrawObject {
     constructor({ x, y, image, width, height, clickable }) {
@@ -189,7 +183,7 @@ class DrawObject {
 }
 
 let scenarioBox_1 = new DrawObject({
-    x: 500,
+    x: 3500,
     y: 80,
     image: pinkBox,
     width: pinkBox.width,
@@ -205,8 +199,7 @@ let scenarioBox_2 = new DrawObject({
 })
 
 let scenarioBox_3 = new DrawObject({
-    x: 500,
-    // x: 7200,
+    x: 7200,
     y: 80,
     image: pinkBox,
     width: pinkBox.width,
@@ -340,7 +333,8 @@ function gameStart() {
     })]
 
     scenarioBox_1 = new DrawObject({
-        x: 3500,
+        x: 500,
+        // x: 3500,
         y: 80,
         image: pinkBox,
         width: pinkBox.width,
@@ -402,6 +396,7 @@ function gameStart() {
 const minigame = {
     initiated: false
 }
+
 
 function animate() {
     const animationId = requestAnimationFrame(animate)
@@ -481,12 +476,8 @@ function animate() {
 
     if (player.collidesWith(scenarioBox_1)) {
         console.log("colliding with first scenario")
-        scenarioBox_1.position.x = 0
-        scenarioBox_1.position.y = 0
-        originalPlayerPosition = {
-            x: player.x,
-            y: player.y
-        }
+        scenarioBox_1.position.x = -200
+        scenarioBox_1.position.y = -200
         window.cancelAnimationFrame(animationId)
         minigame.initiated = true
         gsap.to('#overlap', {
@@ -510,12 +501,8 @@ function animate() {
         })
     } if (player.collidesWith(scenarioBox_2)) {
         console.log("colliding with second scenario")
-        scenarioBox_2.position.x = 0
-        scenarioBox_2.position.y = 0
-        originalPlayerPosition = {
-            x: player.x,
-            y: player.y
-        }
+        scenarioBox_2.position.x = -200
+        scenarioBox_2.position.y = -200
         window.cancelAnimationFrame(animationId)
         minigame.initiated = true
         gsap.to('#overlap', {
@@ -539,12 +526,8 @@ function animate() {
         })
     } if (player.collidesWith(scenarioBox_3)) {
         console.log("colliding with third scenario")
-        scenarioBox_3.position.x = 0
-        scenarioBox_3.position.y = 0
-        originalPlayerPosition = {
-            x: player.x,
-            y: player.y
-        }
+        scenarioBox_3.position.x = -200
+        scenarioBox_3.position.y = -200
         window.cancelAnimationFrame(animationId)
         minigame.initiated = true
         gsap.to('#overlap', {
@@ -568,12 +551,8 @@ function animate() {
         })
     } if (player.collidesWith(audioBox)) {
         console.log("colliding with audio game")
-        audioBox.position.x = 0
-        audioBox.position.y = 0
-        originalPlayerPosition = {
-            x: player.x,
-            y: player.y
-        }
+        audioBox.position.x = -200
+        audioBox.position.y = -200
         window.cancelAnimationFrame(animationId)
         minigame.initiated = true
         gsap.to('#overlap', {
@@ -598,12 +577,8 @@ function animate() {
         })
     } if (player.collidesWith(visualBox)) {
         console.log("colliding with visual game")
-        visualBox.position.x = 0
-        visualBox.position.y = 0
-        originalPlayerPosition = {
-            x: player.x,
-            y: player.y
-        }
+        visualBox.position.x = -200
+        visualBox.position.y = -200
         window.cancelAnimationFrame(animationId)
         minigame.initiated = true
         gsap.to('#overlap', {
@@ -676,15 +651,6 @@ function animate() {
 animate()
 gameStart()
 
-
-function backToOriginalPosition() {
-    gsap.to(player, {
-        x: originalPlayerPosition.x,
-        y: originalPlayerPosition.y,
-        duration: 1
-    });
-}
-
 const visualBackground = new Image();
 visualBackground.src = './img/visualGameBackground.png'
 
@@ -729,28 +695,54 @@ class Sprite {
         if (this.frames > 4) this.frames = 0
         this.draw()
     }
+
+    destroy() {
+        this.image = null
+    }
 }
 
-function beginVisualGame() {
+function preloadImages(imageUrls) {
+    const promises = imageUrls.map((url) => {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.onload = () => resolve(img);
+            img.onerror = reject;
+            img.src = url;
+        });
+    });
+
+    return Promise.all(promises);
+}
+
+var visualGameText = 'Focus on all of the red items you can see. Click them when you see them!';
+var visualGameDiv = createTextDiv(visualGameText, '450px', '90px', '100px', '500px');
+let vTB = []
+vTB.push(visualGameDiv)
+
+async function beginVisualGame() {
     nextBackground.draw()
     let score = 0;
+
+    vTB.forEach(TB => {
+        document.body.appendChild(TB);
+    });
 
     const redImages = [
         './img/visualGameImages/apple.png',
         './img/visualGameImages/cherry.png',
-        // './img/visualGameImages/redLollipop.png',
-        // './img/visualGameImages/strawberry.png',
-        // './img/visualGameImages/redCircle.png'
+        './img/visualGameImages/redLollipop.png',
+        './img/visualGameImages/strawberry.png',
+        './img/visualGameImages/redCircle.png'
     ];
 
     const notRedImages = [
         './img/visualGameImages/greenLollipop.png',
         './img/visualGameImages/purpleLollipop.png',
-        // './img/visualGameImages/milk.png',
-        // './img/visualGameImages/cheese.png',
-        // './img/visualGameImages/greenCircle.png',
-        // './img/visualGameImages/purpleCircle.png',
-        // './img/visualGameImages/yellowCircle.png'
+        './img/visualGameImages/milk.png',
+        './img/visualGameImages/cheese.png',
+        './img/visualGameImages/greenCircle.png',
+        './img/visualGameImages/purpleCircle.png',
+        './img/visualGameImages/yellowCircle.png'
     ];
 
     function getRandomPosition(min, max) {
@@ -776,6 +768,7 @@ function beginVisualGame() {
     const reds = [];
     const notReds = [];
 
+    await preloadImages([...redImages, ...notRedImages]);
 
     for (let i = 0; i < redImages.length; i++) {
         const red = document.createElement('img');
@@ -819,8 +812,8 @@ function beginVisualGame() {
                             notReds.forEach(notRed => {
                                 notRed.setAttribute('hidden', true)
                             })
+                            visualGameDiv.setAttribute('hidden', true)
                             animate()
-                            backToOriginalPosition()
                             gsap.to('#overlap', {
                                 opacity: 0
                             })
@@ -942,41 +935,49 @@ function createTextDiv(text, width, height, top, left) {
     return div;
 }
 
-var foodText = 'What food should Sam eat for lunch today? (Please choose 3 items)';
-var foodDiv = createTextDiv(foodText, '250px', '100px', '530px', '630px');
+var foodText = 'What food should Sam eat for lunch today? Click three items!';
+var foodDiv = createTextDiv(foodText, '250px', '100px', '460px', '780px');
 let textBox = []
 textBox.push(foodDiv)
 
 
+let animationComplete = false;
+
 function beginFirstScenario() {
-    requestAnimationFrame(beginFirstScenario)
-    schoolRoomBackground.draw()
+
+    if (animationComplete) {
+        return;
+    }
+
+    scenarioAnimationId = requestAnimationFrame(beginFirstScenario);
+    schoolRoomBackground.draw();
 
     differentFoodTypes.forEach(food => {
-        food.draw()
-    })
+        food.draw();
+    });
 
     textBox.forEach(box => {
         document.body.appendChild(box);
-    })
+    });
 
-    playerOne.update()
+    playerOne.update();
 
     if (foodClickCount >= 3) {
-        cancelAnimationFrame(beginFirstScenario)
         gsap.to('#overlap', {
             opacity: 1,
             onComplete: () => {
                 foodDiv.setAttribute('hidden', true);
-                animate()
-                console.log("back to main screen")
                 gsap.to('#overlap', {
-                    opacity: 0
-                })
+                    opacity: 0,
+                    onComplete: () => {
+                        cancelAnimationFrame(scenarioAnimationId);
+                        animationComplete = true;
+                        animate()
+                    }
+                });
             }
-        })
+        });
     }
-
 }
 
 let bedroomImage = new Image();
@@ -996,7 +997,7 @@ const playerTwo = new Sprite({
     width: 150,
     height: 150,
     image: playerIdle,
-    frames: 4
+    frames: 1
 })
 
 var afterSchoolText = 'School is over and the weather is sunny! What should Sam do this evening? a.) Go for a walk b.) Go to sleep c.) Call a friend';
@@ -1006,7 +1007,6 @@ textBox2.push(afterSchoolDiv)
 
 document.querySelectorAll('.optionButton').forEach((button) => {
     button.addEventListener('click', () => {
-        console.log("clicked")
         let nextButton = document.createElement('button');
         nextButton.setAttribute('class', 'next-button');
         nextButton.innerText = 'Finish';
@@ -1023,16 +1023,8 @@ document.querySelectorAll('.optionButton').forEach((button) => {
                     textBox2.forEach(box => {
                         box.setAttribute('hidden', true)
                     })
-                    textBox3.forEach(box => {
-                        box.setAttribute('hidden', true)
-                    })
-                    optionsBars.forEach(bar => {
-                        bar.setAttribute('hidden', true)
-                        bar.style.display = 'none'
-                    })
+                    document.getElementById('optionBar').style.display = 'none'
                     animate()
-                    backToOriginalPosition()
-                    console.log('ya')
                     gsap.to('#overlap', {
                         opacity: 0
                     })
@@ -1042,15 +1034,7 @@ document.querySelectorAll('.optionButton').forEach((button) => {
     })
 })
 
-let optionBar = document.getElementById('optionBar')
-let schoolOptionBar = document.getElementById('schoolOptionBar')
-let optionsBars = []
-
-optionsBars.push(optionBar)
-optionsBars.push(schoolOptionBar)
-
 function beginSecondScenario() {
-    requestAnimationFrame(beginSecondScenario)
     bedroomBackground.draw()
 
     document.getElementById('optionBar').style.display = 'block'
@@ -1064,9 +1048,6 @@ function beginSecondScenario() {
 
 let classroomImage = new Image();
 classroomImage.src = './img/classroom.png'
-
-let robotImage = new Image();
-robotImage.src = './img/robotTeacher.png'
 
 let robotImage2 = new Image();
 robotImage2.src = './img/robotTurningAround.png'
@@ -1116,9 +1097,38 @@ const robot3 = new Sprite({
 })
 
 var inSchoolText = 'Sam just arrived at school! What should they do first?';
-var inSchoolDiv = createTextDiv(inSchoolText, '450px', '70px', '130px', '600px');
+var inSchoolDiv = createTextDiv(inSchoolText, '450px', '70px', '90px', '600px');
 let textBox3 = []
 textBox3.push(inSchoolDiv)
+
+document.querySelectorAll('.schoolOptionButton').forEach((button) => {
+    button.addEventListener('click', () => {
+        let nextButton = document.createElement('button');
+        nextButton.setAttribute('class', 'next-button');
+        nextButton.innerText = 'Finish';
+        document.body.appendChild(nextButton);
+        nextButton.addEventListener('click', () => {
+            gsap.to('#overlap', {
+                opacity: 1,
+                onComplete: () => {
+                    cancelAnimationFrame(beginSecondScenario)
+                    nextButton.setAttribute('hidden', true);
+                    document.querySelectorAll('.schoolOptionButton').forEach((button) => {
+                        button.setAttribute('hidden', true)
+                    })
+                    textBox3.forEach(box => {
+                        box.setAttribute('hidden', true)
+                    })
+                    document.getElementById('schoolOptionBar').style.display = 'none'
+                    animate()
+                    gsap.to('#overlap', {
+                        opacity: 0
+                    })
+                }
+            })
+        })
+    })
+})
 
 function beginThirdScenario() {
     classroom.draw()
@@ -1134,7 +1144,6 @@ function beginThirdScenario() {
     robot3.draw()
     playerThree.draw()
 }
-
 
 document.getElementById('noButton').addEventListener('click', () => {
     document.getElementById('animalButtonsDiv').style.display = 'block'
@@ -1152,7 +1161,6 @@ document.getElementById('yesButton').addEventListener('click', () => {
     beginAudioGame()
 
     selectedAnAnimalCount++
-    console.log(selectedAnAnimalCount)
 
     if (selectedAnAnimalCount >= 3) {
         gsap.to('#overlap', {
@@ -1164,8 +1172,6 @@ document.getElementById('yesButton').addEventListener('click', () => {
                 document.getElementById('selectedAnimal').style.display = 'none'
                 document.getElementById('audioGameDiv').style.display = 'none'
                 animate()
-                backToOriginalPosition()
-                console.log('ya')
                 gsap.to('#overlap', {
                     opacity: 0
                 })
@@ -1174,7 +1180,6 @@ document.getElementById('yesButton').addEventListener('click', () => {
     }
     console.log("THIS IS WHERE YOU WILL LOG THE SCORE EVENTUALLY")
 })
-
 
 function beginAudioGame() {
     console.log("beginning audio game")
@@ -1259,14 +1264,12 @@ function beginAudioGame() {
         if (clickedElement.tagName === 'IMG') {
             document.getElementById('animalButtonsDiv').style.display = 'none'
             document.getElementById('confirmSelection').style.display = 'block'
+            document.getElementById('selectedAnimal').style.display = 'block'
             document.getElementById('selectedAnimal').innerHTML = 'You selected : ' + selectedAnimal
             checkAnimalSelection();
         }
     })
 }
-
-
-
 
 window.addEventListener('keydown', (e) => {
     e = e || window.event;
