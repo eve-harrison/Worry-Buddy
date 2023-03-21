@@ -7,6 +7,47 @@
         justify-content: center;
     }
 
+    #welcomePlayerContainer {
+        position: absolute;
+        top: 100;
+        left: 200;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        width: 1100px;
+        height: 500px;
+    }
+
+    #welcomeText {
+        width: 50%;
+        height: 100%;
+        padding: 20px;
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 24px;
+        justify-self: end;
+        color: black;
+        font-weight: bold;
+    }
+
+    #playButton {
+        position: absolute;
+        bottom: 50;
+        right: 30;
+        margin: 10px;
+        font-size: 24px;
+        background-color: #45c61e;
+        border: none;
+        border-radius: 5px;
+        color: white;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        transition-duration: 0.4s;
+        cursor: pointer;
+        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+        font-family: 'Comic Sans MS', cursive, sans-serif;
+    }
+
     .clickable-image {
         height: 120px;
         width: 120px;
@@ -157,6 +198,33 @@
         margin-top: 80px;
         margin-left: 40px;
     }
+
+    #welcome {
+        font-size: 50px;
+        color: red;
+        font-family: 'Courier New', Courier, monospace;
+        font-weight: bolder;
+        background-color: white;
+
+    }
+
+    #howToPlay,
+    #hint {
+        font-size: 20px;
+        font-weight: bold;
+        font-family: 'Courier New', Courier, monospace;
+        align-self: center;
+        color: black;
+        background-color: white;
+    }
+
+    .speech-bubble {
+        background-color: black;
+        width: 200px;
+        height: 200px;
+        border-radius: 12px;
+        position: absolute;
+    }
 </style>
 
 
@@ -164,6 +232,45 @@
     opacity:0; pointer-events:none;z-index:10;">
 </div>
 <canvas></canvas>
+<div id="welcomePlayerContainer">
+    <div id="speech-bubble">
+        <p id="welcome"> WELCOME PLAYER! </p>
+        <p id="howToPlay">To win the game, make it to the end of the track
+            with the highest score
+        </p>
+        <p id="hint"> (HINT) Jump up to tap all the mystery boxes along
+            the way!
+        </p>
+    </div>
+    <div id="welcomeText">
+        <p>Press <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="20" height="20">
+                <g data-name="11-Arrow Right">
+                    <path
+                        d="M25 0H7a7 7 0 0 0-7 7v18a7 7 0 0 0 7 7h18a7 7 0 0 0 7-7V7a7 7 0 0 0-7-7zm5 25a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5h18a5 5 0 0 1 5 5z" />
+                    <path d="m19.71 8.29-1.42 1.42 5.3 5.29H5v2h18.59l-5.29 5.29 1.41 1.41 7-7a1 1 0 0 0 0-1.41z" />
+                </g>
+            </svg>
+            key to move right</p>
+        <p> Press <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="20" height="20">
+                <g data-name="12-Arrow Left">
+                    <path
+                        d="M25 0H7a7 7 0 0 0-7 7v18a7 7 0 0 0 7 7h18a7 7 0 0 0 7-7V7a7 7 0 0 0-7-7zm5 25a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5h18a5 5 0 0 1 5 5z" />
+                    <path d="m13.71 9.71-1.42-1.42-7 7a1 1 0 0 0 0 1.41l7 7 1.41-1.41L8.41 17H27v-2H8.41z" />
+                </g>
+            </svg>
+            key to move left</p>
+        <p> Press <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="20" height="20">
+                <g data-name="9-Arrow Up">
+                    <path
+                        d="M25 0H7a7 7 0 0 0-7 7v18a7 7 0 0 0 7 7h18a7 7 0 0 0 7-7V7a7 7 0 0 0-7-7zm5 25a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5h18a5 5 0 0 1 5 5z" />
+                    <path d="m15.29 5.29-7 7L9.7 13.7 15 8.41V27h2V8.41l5.29 5.29 1.41-1.41-7-7a1 1 0 0 0-1.41 0z" />
+                </g>
+            </svg>
+            key to jump </p>
+        <p>And press space bar to breathe! </p>
+    </div>
+    <button id="playButton">Let's play!</button>
+</div>
 <div id="optionBar" style="display:none;">
     <div id="buttonContainer">
         <button class="optionButton"> (a.)Walk</button>
