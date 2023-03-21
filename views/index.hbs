@@ -3,37 +3,85 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/styles.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
-        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
-        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-        crossorigin="anonymous"></script>
-</head>
+    <title>The Worry Buddy</title>
+    <style>
+        body {
+            background-color: #8BC34A;
+            font-family: 'Times New Roman', Times, serif;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        #mainBodyDiv {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            margin: 50px auto;
+            max-width: 600px;
+            padding: 30px;
+        }
+
+        h1 {
+            font-size: 60px;
+            color: #4CAF50;
+            margin-bottom: 30px;
+        }
+
+        #loginButton,
+        #signupButton {
+            background-color: #4CAF50;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            cursor: pointer;
+            font-size: 24px;
+            margin: 10px;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+
+
+                {
+                !-- display: block;
+                --
+            }
+
+
+            width: 100%;
+        }
+
+        #loginButton:hover,
+        #signupButton:hover {
+            background-color: #388E3C;
+        }
+
+        #playerOne {
+            height: 280px;
+            width: 250px;
+            justify-self: center;
+            max-width: 100%;
+            margin-bottom: 20px;
+            display: block;
+            margin: 0 auto;
+
+        }
+    </style>
 </head>
 
 <body>
-    <nav id="loginNavBar">
-        <li> <a href="/game">
-                <button class="btn btn-success btn-lg"> Main Game </button>
-            </a>
-            <a href="/platformer">
-                <button class="btn btn-success btn-lg"> Platformer </button>
-            </a>
-            <a href="/dragAndDrop">
-                <button class="btn btn-success btn-lg"> Drag and Drop </button>
-        </li>
-    </nav>
+    <li>
+        <a href="/platformer">
+            <button> Platformer </button>
+        </a>
+        <a href="/dragAndDrop">
+            <button> Drag and Drop </button>
+    </li>
     <div id="mainBodyDiv">
-        <h1>The Worry Buddy </h1>
-        <img src="/img/screenshotOfGame.jpg" alt="Picture of The Worry Buddy game">
-        <a href="/login"><button class="btn btn-success btn-lg"> Login </button>
-        </a>
-        <a href="/register">
-            <button class="btn btn-success btn-lg"> Sign up </button>
-        </a>
+        <h1>The Worry Buddy</h1>
+        <p> Help Sam to navigate their world and learn new skills to win the game! </p>
+        <img id="playerOne" src="./img/playerForStartScreen.png" alt="Player">
+        <a href="/login"><button id="loginButton">Login</button></a>
+        <a href="/register"><button id="signupButton">Sign Up</button></a>
     </div>
 </body>
 

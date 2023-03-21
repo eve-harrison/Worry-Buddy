@@ -3,35 +3,128 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/styles.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
-</head>
+    <title>Login</title>
+    <style>
+        body {
+            background-color: #8BC34A;
+            font-family: 'Times New Roman', Times, serif;
+            text-align: center;
+        }
+
+        #title {
+            font-size: 50px;
+            font-weight: bolder;
+            color: #4CAF50;
+        }
+
+        #loginNavBar {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            margin: 10px auto;
+            max-width: 400px;
+            padding: 10px;
+        }
+
+        #loginNavBar li {
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        #loginNavBar a {
+            color: #1d90e1;
+            text-decoration: underline;
+            font-size: 20px;
+        }
+
+        #mainContainer {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            margin: 50px auto;
+            max-width: 600px;
+            padding: 30px;
+        }
+
+        #loginOrRegister {
+            margin-top: 20px;
+        }
+
+        #loginOrRegister div {
+            font-size: 24px;
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+
+        #loginOrRegister label {
+            margin-bottom: 10px;
+            color: #4CAF50;
+        }
+
+        .inputArea {
+            padding: 10px;
+            margin-bottom: 20px;
+            width: 50%;
+            box-sizing: border-box;
+        }
+
+        #loginOrRegister button {
+            background-color: #4CAF50;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            cursor: pointer;
+            font-size: 24px;
+            margin: 10px auto;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+
+
+            width: 50%;
+            max-width: 200px;
+        }
+
+        #loginOrRegister button:hover {
+            background-color: #388E3C;
+        }
+
+        #usernameLabel {
+            justify-self: start;
+        }
+
+        #playerImage {
+            width: 200px;
+            height: 220px;
+            bottom: 0;
+            left: 0;
+            padding-right: 100px;
+            z-index: -1;
+        }
+    </style>
 </head>
 
 <body>
     <nav id="loginNavBar">
-        <li><a href="/register"> New to the game? Register here. </a></li>
+        <ul>
+            <li><a href="/register">New to the game? Register here.</a></li>
+        </ul>
     </nav>
-
-    <div id="mainContainer" class="container mt-4">
-        <div id="loginOrRegister" class="card" style="width: 18rem;">
-            <div class="card-header">The Worry Buddy Login ! </div>
-            <div class="card-body">
-                <form>
-                    <div class="mb-3">
-                        <label for="name-lgn" class="form-label"> Enter your username : </label>
-                        <input type="text" class="form-control" id="name-lgn" name="name">
-                    </div>
-                    <div class="mb-3">
-                        <label for="password-lgn" class="form-label"> Enter you password : </label>
-                        <input type="password" class="form-control" id="password-lgn" name="password">
-                    </div>
-                    <button type="submit" class="btn btn-primary"> Play game</button>
-                </form>
-            </div>
+    <div id="mainContainer">
+        <div id="title">The Worry Buddy: Login</div>
+        <div id="loginOrRegister">
+            <form>
+                <div>
+                    <label id="usernameLabel" for="name-lgn">Enter your username : </label>
+                    <input class="inputArea" type="text" id="name-lgn" name="name">
+                </div>
+                <div>
+                    <label for="password-lgn">Enter your password : </label>
+                    <input class="inputArea" type="password" id="password-lgn" name="password">
+                </div>
+                <img id="playerImage" src="./img/playerForSignInScreen.png" alt="Player">
+                <button type="submit">Play game</button>
+            </form>
         </div>
     </div>
 </body>
