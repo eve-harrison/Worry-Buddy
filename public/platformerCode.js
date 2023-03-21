@@ -8,6 +8,8 @@ var frameDelay = 0
 let foodClickCount = 0
 let selectedAnAnimalCount = 0
 
+let score = 0
+
 let backgroundImage = new Image();
 backgroundImage.src = './img/bestBackground.jpg'
 
@@ -196,7 +198,8 @@ let scenarioBox_2 = new DrawObject({
 })
 
 let scenarioBox_3 = new DrawObject({
-    x: 7200,
+    x: 500,
+    // x: 7200,
     y: 80,
     image: pinkBox,
     width: pinkBox.width,
@@ -354,8 +357,7 @@ function gameStart() {
     })
 
     audioBox = new DrawObject({
-        x: 500,
-        // x: 8700,
+        x: 8700,
         y: 80,
         image: redBox,
         width: redBox.width,
@@ -530,6 +532,33 @@ function animate() {
         })
     } if (player.collidesWith(scenarioBox_3)) {
         console.log("colliding with third scenario")
+        scenarioBox_3.position.x = 0
+        scenarioBox_3.position.y = 0
+        originalPlayerPosition = {
+            x: player.x,
+            y: player.y
+        }
+        window.cancelAnimationFrame(animationId)
+        minigame.initiated = true
+        gsap.to('#overlap', {
+            opacity: 1,
+            repeat: 2,
+            yoyo: true,
+            duration: 0.4,
+            onComplete() {
+                gsap.to('#overlap', {
+                    opacity: 1,
+                    duration: 0.4,
+                    onComplete() {
+                        beginThirdScenario()
+                        console.log("beginning third scenario")
+                        gsap.to('#overlap', {
+                            opacity: 0
+                        })
+                    }
+                })
+            }
+        })
     } if (player.collidesWith(audioBox)) {
         console.log("colliding with audio game")
         audioBox.position.x = 0
@@ -590,8 +619,50 @@ function animate() {
             }
 
         })
-    } if (player.collidesWith(flag)) {  // edge of the last hill when you jump off the big platform
+    } if (player.collidesWith(flag)) {
         console.log("YOU WIN")
+
+        cancelAnimationFrame(animationId)
+
+        var winDiv = document.createElement("div");
+
+        winDiv.style.position = "fixed";
+        winDiv.style.top = "50%";
+        winDiv.style.left = "50%";
+        winDiv.style.transform = "translate(-50%, -50%)";
+        winDiv.style.border = 'none'
+        winDiv.style.padding = "20px";
+
+        var header = document.createElement("h1");
+        header.style.color = "black";
+        header.style.fontSize = "7em";
+        header.textContent = "You Win!";
+
+        var scoreParagraph = document.createElement("p");
+        scoreParagraph.style.fontSize = "5em";
+        scoreParagraph.style.color = "black";
+        scoreParagraph.textContent = "Your score: " + score;
+
+        var playAgainButton = document.createElement("button");
+        playAgainButton.textContent = "Play again";
+        playAgainButton.style.backgroundColor = "green";
+        playAgainButton.style.border = "none";
+        playAgainButton.style.color = "white";
+        playAgainButton.style.fontSize = "1.5em";
+        playAgainButton.style.padding = "10px";
+        playAgainButton.style.position = "absolute";
+        playAgainButton.style.bottom = "10px";
+        playAgainButton.style.right = "10px";
+
+        playAgainButton.addEventListener('click', () => {
+            window.location.href = './login'
+        })
+
+        winDiv.appendChild(header);
+        winDiv.appendChild(scoreParagraph);
+        winDiv.appendChild(playAgainButton);
+
+        document.body.appendChild(winDiv);
     }
 }
 
@@ -945,7 +1016,13 @@ document.querySelectorAll('.optionButton').forEach((button) => {
                     textBox2.forEach(box => {
                         box.setAttribute('hidden', true)
                     })
-                    document.getElementById('optionBar').style.display = 'none'
+                    textBox3.forEach(box => {
+                        box.setAttribute('hidden', true)
+                    })
+                    optionsBars.forEach(bar => {
+                        bar.setAttribute('hidden', true)
+                        bar.style.display = 'none'
+                    })
                     animate()
                     backToOriginalPosition()
                     console.log('ya')
@@ -957,6 +1034,13 @@ document.querySelectorAll('.optionButton').forEach((button) => {
         })
     })
 })
+
+let optionBar = document.getElementById('optionBar')
+let schoolOptionBar = document.getElementById('schoolOptionBar')
+let optionsBars = []
+
+optionsBars.push(optionBar)
+optionsBars.push(schoolOptionBar)
 
 function beginSecondScenario() {
     requestAnimationFrame(beginSecondScenario)
@@ -971,6 +1055,80 @@ function beginSecondScenario() {
     playerTwo.update()
 }
 
+let classroomImage = new Image();
+classroomImage.src = './img/classroom.png'
+
+let robotImage = new Image();
+robotImage.src = './img/robotTeacher.png'
+
+let robotImage2 = new Image();
+robotImage2.src = './img/robotTurningAround.png'
+
+const classroom = new DrawObject({
+    x: 310, y: -1,
+    image: classroomImage,
+    width: 700,
+    height: 576
+
+})
+
+const playerThree = new Sprite({
+    x: 780,
+    y: 120,
+    width: 150,
+    height: 150,
+    image: playerIdle,
+    frames: 3
+})
+
+const robot = new Sprite({
+    x: 390,
+    y: 310,
+    width: 150,
+    height: 150,
+    image: robotImage2,
+    frames: 3
+})
+
+const robot2 = new Sprite({
+    x: 330,
+    y: 140,
+    width: 150,
+    height: 150,
+    image: robotImage2,
+    frames: 1
+})
+
+const robot3 = new Sprite({
+    x: 780,
+    y: 310,
+    width: 150,
+    height: 150,
+    image: robotImage2,
+    frames: 4
+})
+
+var inSchoolText = 'Sam just arrived at school! What should they do first?';
+var inSchoolDiv = createTextDiv(inSchoolText, '450px', '70px', '130px', '600px');
+let textBox3 = []
+textBox3.push(inSchoolDiv)
+
+function beginThirdScenario() {
+    classroom.draw()
+
+    document.getElementById('schoolOptionBar').style.display = 'block'
+
+    textBox3.forEach(box => {
+        document.body.appendChild(box);
+    })
+
+    robot.draw()
+    robot2.draw()
+    robot3.draw()
+    playerThree.draw()
+}
+
+
 document.getElementById('noButton').addEventListener('click', () => {
     document.getElementById('animalButtonsDiv').style.display = 'block'
     document.getElementById('animal-container').style.display = 'block'
@@ -984,33 +1142,29 @@ document.getElementById('yesButton').addEventListener('click', () => {
     document.getElementById('confirmSelection').style.display = 'none'
     document.getElementById('selectedAnimal').style.display = 'none'
 
-    const audioGame = document.getElementById('audioGameDiv')
+    beginAudioGame()
 
     selectedAnAnimalCount++
     console.log(selectedAnAnimalCount)
 
     if (selectedAnAnimalCount >= 3) {
-        let nextButton = document.createElement('button');
-        nextButton.setAttribute('class', 'next-button');
-        nextButton.innerText = 'Finish';
-        document.body.appendChild(nextButton);
-        nextButton.addEventListener('click', () => {
-            gsap.to('#overlap', {
-                opacity: 1,
-                onComplete: () => {
-                    nextButton.setAttribute('hidden', true);
-                    audioGame.setAttribute('hidden', true)
-                    animate()
-                    backToOriginalPosition()
-                    console.log('ya')
-                    gsap.to('#overlap', {
-                        opacity: 0
-                    })
-                }
-            })
+        gsap.to('#overlap', {
+            opacity: 1,
+            onComplete: () => {
+                document.getElementById('animalButtonsDiv').style.display = 'none'
+                document.getElementById('animal-container').style.display = 'none'
+                document.getElementById('confirmSelection').style.display = 'none'
+                document.getElementById('selectedAnimal').style.display = 'none'
+                document.getElementById('audioGameDiv').style.display = 'none'
+                animate()
+                backToOriginalPosition()
+                console.log('ya')
+                gsap.to('#overlap', {
+                    opacity: 0
+                })
+            }
         })
     }
-
     console.log("THIS IS WHERE YOU WILL LOG THE SCORE EVENTUALLY")
 })
 
@@ -1031,6 +1185,9 @@ function beginAudioGame() {
     const cat = document.getElementById('cat');
     const cow = document.getElementById('cow');
     const frog = document.getElementById('frog');
+    const pig = document.getElementById('pig');
+    const fox = document.getElementById('fox');
+    const chicken = document.getElementById('chicken');
 
     const animalContainer = document.getElementById('animal-container');
     let selectedAnimal = null;
@@ -1063,6 +1220,21 @@ function beginAudioGame() {
 
     frog.addEventListener('click', function () {
         selectedAnimal = 'frog';
+        isAnimalSelected = true;
+    });
+
+    fox.addEventListener('click', function () {
+        selectedAnimal = 'fox';
+        isAnimalSelected = true;
+    });
+
+    pig.addEventListener('click', function () {
+        selectedAnimal = 'pig';
+        isAnimalSelected = true;
+    });
+
+    chicken.addEventListener('click', function () {
+        selectedAnimal = 'chicken';
         isAnimalSelected = true;
     });
 
