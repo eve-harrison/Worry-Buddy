@@ -40,7 +40,8 @@
         border: none;
     }
 
-    #optionBar {
+    #optionBar,
+    #schoolOptionBar {
         position: absolute;
         bottom: 93px;
         left: 500px;
@@ -58,7 +59,8 @@
         grid-template-columns: repeat(3, 1fr);
     }
 
-    .optionButton {
+    .optionButton,
+    .schoolOptionBar {
         cursor: pointer;
         font-size: 18px;
         font-family: 'Courier New', Courier, monospace;
@@ -66,15 +68,21 @@
         border-right: 4px black solid;
     }
 
-    .optionButton:hover {
+    .optionButton:hover,
+    .schoolOptionBar:hover {
         background-color: #ccc;
+    }
+
+    .optionButton:active,
+    .schoolOptionBar:active {
+        background-color: #969595;
     }
 
     #audioGameDiv {
         position: absolute;
         width: 500px;
-        height: 500px;
-        background-color: white;
+        height: 400px;
+        background-color: #67E6D1;
         z-index: 10;
     }
 
@@ -118,7 +126,7 @@
     }
 
     #selectAnimal {
-        font-size: 18px;
+        font-size: 24px;
         color: #333;
         font-family: 'Comic Sans MS', cursive, sans-serif;
         line-height: 1.5;
@@ -161,6 +169,13 @@
         <button class="optionButton"> (a.)Walk</button>
         <button class="optionButton"> (b.)Sleep</button>
         <button class="optionButton"> (c.)Call a friend</button>
+    </div>
+</div>
+<div id="schoolOptionBar" style="display:none;">
+    <div id="buttonContainer">
+        <button class="optionButton"> Talk to friends</button>
+        <button class="optionButton"> Draw a picture</button>
+        <button class="optionButton"> Listen to Music</button>
     </div>
 </div>
 <div id="audioGameDiv" style="display: none; justify-content:center; align-items:center">
