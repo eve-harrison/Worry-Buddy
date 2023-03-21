@@ -1,3 +1,10 @@
+const welcomePlayer = document.getElementById('welcomePlayerContainer')
+const playButton = document.getElementById('playButton')
+
+playButton.addEventListener('click', () => {
+    welcomePlayer.style.display = 'none'
+});
+
 const canvas = document.querySelector('canvas')
 const c = canvas.getContext('2d')
 
