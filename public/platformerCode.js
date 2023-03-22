@@ -1,6 +1,8 @@
 const welcomePlayer = document.getElementById('welcomePlayerContainer')
 const playButton = document.getElementById('playButton')
 
+var anxietyScore = sessionStorage.getItem("anxietyScore")
+
 playButton.addEventListener('click', () => {
     welcomePlayer.style.display = 'none'
 });
@@ -38,6 +40,12 @@ function holdSpaceBarForTimeLimit(timeLimitInSeconds, timerObject) {
         } else {
             message = 'Hold down the SPACE BAR and Breathe IN ';
         }
+
+        if ((!isHoldingSpaceBar) && remainingTime > 0 && (timerElement.style.display = 'block')) {
+            OVERALL_SCORE--
+            console.log(OVERALL_SCORE)
+        }
+
         timerElement.textContent = `${message} for ${seconds} more second${seconds === 1 ? '' : 's'}`;
     };
 
@@ -49,6 +57,8 @@ function holdSpaceBarForTimeLimit(timeLimitInSeconds, timerObject) {
             if (remainingTime <= 0) {
                 clearInterval(timerId);
                 if (isHoldingSpaceBar) {
+                    OVERALL_SCORE += 40
+                    console.log(OVERALL_SCORE)
                     timerElement.textContent = 'Good job!';
                     timerElement.style.fontSize = '50px'
                     timerElement.style.color = 'green'
@@ -93,8 +103,10 @@ let scenarioOneAnimationId
 let scenarioTwoAnimationId
 let scenarioThreeAnimationId
 
+let OVERALL_SCORE = 0
 
-let score = 0
+
+let redCounter = 0
 
 let backgroundImage = new Image();
 backgroundImage.src = './img/bestBackground.jpg'
@@ -234,6 +246,7 @@ class DrawObject {
         this.width = width || image.width;
         this.height = height || image.height;
         this.clickable = clickable || false;
+
         if (this.clickable) {
             this.registerClickListener()
         }
@@ -249,10 +262,33 @@ class DrawObject {
             const mouseY = event.clientY - canvasBounds.top;
             if (mouseX >= this.position.x && mouseX <= this.position.x + this.width && mouseY >= this.position.y && mouseY <= this.position.y + this.height) {
                 this.move()
-                foodClickCount++
+                switch (this.image) {
+                    case breadImage:
+                        OVERALL_SCORE += 10;
+                        break;
+                    case appleImage:
+                        OVERALL_SCORE += 20;
+                        break;
+                    case cupcakeImage:
+                        OVERALL_SCORE -= 5;
+                        break;
+                    case donutImage:
+                        OVERALL_SCORE -= 5;
+                        break;
+                    case milkImage:
+                        OVERALL_SCORE += 5;
+                        break;
+                    case colaImage:
+                        OVERALL_SCORE -= 6;
+                        break;
+                }
+
+                console.log(OVERALL_SCORE)
+                foodClickCount++;
             }
         });
     }
+
     move() {
         this.position.x = player.position.x + 200
         this.position.y = player.position.y + 130
@@ -365,8 +401,8 @@ let timer = new DrawObject({
 })
 
 let scenarioBox_1 = new DrawObject({
-    x: 2050,
-    y: 80,
+    x: 6500,
+    y: -40,
     image: pinkBox,
     width: pinkBox.width,
     height: pinkBox.height
@@ -397,8 +433,8 @@ let audioBox = new DrawObject({
 })
 
 let visualBox = new DrawObject({
-    x: 6500,
-    y: -40,
+    x: 2050,
+    y: 80,
     image: greenBox,
     width: greenBox.width,
     height: greenBox.height
@@ -427,8 +463,6 @@ const minigame = {
 
 function animate() {
     const animationId = requestAnimationFrame(animate)
-    c.fillStyle = 'white'
-    c.fillRect(0, 0, canvas.width, canvas.height)
 
     backgroundObjects.forEach(randomOject => {
         randomOject.draw()
@@ -662,10 +696,10 @@ function animate() {
         var scoreParagraph = document.createElement("p");
         scoreParagraph.style.fontSize = "5em";
         scoreParagraph.style.color = "black";
-        scoreParagraph.textContent = "Your score: " + score;
+        scoreParagraph.textContent = "Your score: " + OVERALL_SCORE;
 
         var playAgainButton = document.createElement("button");
-        playAgainButton.textContent = "Play again";
+        playAgainButton.textContent = "Review game play";
         playAgainButton.style.backgroundColor = "green";
         playAgainButton.style.border = "none";
         playAgainButton.style.color = "white";
@@ -755,7 +789,7 @@ vTB.push(visualGameDiv)
 
 async function beginVisualGame() {
     nextBackground.draw()
-    let score = 0;
+    let redCounter = 0;
 
     vTB.forEach(TB => {
         document.body.appendChild(TB);
@@ -766,14 +800,14 @@ async function beginVisualGame() {
         './img/visualGameImages/cherry.png',
         './img/visualGameImages/redLollipop.png',
         './img/visualGameImages/strawberry.png',
-        './img/visualGameImages/redCircle.png'
+        // './img/visualGameImages/redCircle.png'
     ];
 
     const notRedImages = [
         './img/visualGameImages/greenLollipop.png',
-        './img/visualGameImages/purpleLollipop.png',
-        './img/visualGameImages/milk.png',
-        './img/visualGameImages/cheese.png',
+        // './img/visualGameImages/purpleLollipop.png',
+        // './img/visualGameImages/milk.png',
+        // './img/visualGameImages/cheese.png',
         './img/visualGameImages/greenCircle.png',
         './img/visualGameImages/purpleCircle.png',
         './img/visualGameImages/yellowCircle.png'
@@ -831,12 +865,13 @@ async function beginVisualGame() {
         }
         red.addEventListener('click', () => {
             red.style.display = 'none';
-            score++;
-            console.log(score);
-            if (score === redImages.length) {
+            redCounter++
+            OVERALL_SCORE++
+            console.log(OVERALL_SCORE)
+            if (redCounter == 1) {
                 const nextButton = document.createElement('button');
                 nextButton.setAttribute('class', 'next-button');
-                nextButton.innerText = 'Finish';
+                nextButton.innerText = 'Finished';
                 document.body.appendChild(nextButton);
                 nextButton.addEventListener('click', () => {
                     gsap.to('#overlap', {
@@ -845,6 +880,9 @@ async function beginVisualGame() {
                             nextButton.setAttribute('hidden', true);
                             notReds.forEach(notRed => {
                                 notRed.setAttribute('hidden', true)
+                            })
+                            reds.forEach(red => {
+                                red.setAttribute('hidden', true)
                             })
                             visualGameDiv.setAttribute('hidden', true)
                             animate()
@@ -1025,24 +1063,57 @@ const playerTwo = new Sprite({
     frames: 1
 })
 
-var afterSchoolText = 'School is over and the weather is sunny! What should Sam do this evening? a.) Go for a walk b.) Go to sleep c.) Call a friend';
+var afterSchoolText = 'School is over and the weather is sunny! What should Sam do this evening?';
 var afterSchoolDiv = createTextDiv(afterSchoolText, '450px', '150px', '130px', '600px');
 let textBox2 = []
 textBox2.push(afterSchoolDiv)
 
+const walkButton = document.getElementById("walkBtn")
+const friendButton = document.getElementById("friendBtn")
+const sleepButton = document.getElementById("sleepBtn")
+
+let walkClicked = false
+let friendClicked = false
+let sleepClicked = false
+let next2Clicked = false
+
+walkButton.addEventListener("click", () => {
+    walkClicked = true;
+})
+
+friendButton.addEventListener("click", () => {
+    friendClicked = true;
+})
+
+sleepButton.addEventListener("click", () => {
+    sleepClicked = true;
+})
+
 document.querySelectorAll('.optionButton').forEach((button) => {
     button.addEventListener('click', () => {
-        let nextButton = document.createElement('button');
-        nextButton.setAttribute('class', 'next-button');
-        nextButton.innerText = 'Finish';
-        document.body.appendChild(nextButton);
-        nextButton.addEventListener('click', () => {
+        let nextButton2 = document.createElement('button');
+        nextButton2.setAttribute('class', 'next-button');
+        nextButton2.innerText = 'Finish';
+        document.body.appendChild(nextButton2);
+        button.style.backgroundColor = 'green'
+        nextButton2.addEventListener('click', () => {
+            next2Clicked = true;
+            if (walkClicked && next2Clicked) {
+                OVERALL_SCORE += 5
+                console.log(OVERALL_SCORE)
+            } if (friendClicked && next2Clicked) {
+                OVERALL_SCORE += 10
+                console.log(OVERALL_SCORE)
+            } if (sleepClicked && next2Clicked) {
+                OVERALL_SCORE -= 5
+                console.log(OVERALL_SCORE)
+            }
             cancelAnimationFrame(scenarioTwoAnimationId)
             gsap.to('#overlap', {
                 opacity: 1,
                 onComplete: () => {
                     cancelAnimationFrame(beginSecondScenario)
-                    nextButton.setAttribute('hidden', true);
+                    nextButton2.setAttribute('hidden', true);
                     document.querySelectorAll('.optionButton').forEach((button) => {
                         button.setAttribute('hidden', true)
                     })
@@ -1128,19 +1199,48 @@ var inSchoolDiv = createTextDiv(inSchoolText, '450px', '70px', '90px', '600px');
 let textBox3 = []
 textBox3.push(inSchoolDiv)
 
+const talkButton = document.getElementById("talkFriendBtn")
+const drawButton = document.getElementById("drawBtn")
+const musicButton = document.getElementById("musicBtn")
+
+let talkClicked = false
+let drawClicked = false
+let musicClicked = false
+let next3Clicked = false
+
+talkButton.addEventListener("click", () => {
+    talkClicked = true;
+})
+
+drawButton.addEventListener("click", () => {
+    drawClicked = true;
+})
+
+musicButton.addEventListener("click", () => {
+    musicClicked = true;
+})
+
 document.querySelectorAll('.schoolOptionButton').forEach((button) => {
     button.addEventListener('click', () => {
-        let nextButton = document.createElement('button');
-        nextButton.setAttribute('class', 'next-button');
-        nextButton.innerText = 'Finish';
-        document.body.appendChild(nextButton);
-        nextButton.addEventListener('click', () => {
+        let nextButton3 = document.createElement('button');
+        nextButton3.setAttribute('class', 'next-button');
+        nextButton3.innerText = 'Finish';
+        document.body.appendChild(nextButton3);
+        nextButton3.addEventListener('click', () => {
+            next3Clicked = true
+            if (talkClicked && next3Clicked) {
+                console.log("TALKING TO FRIENDS HELPS THIS CHILD")
+            } if (drawClicked && next3Clicked) {
+                console.log("DRAWING HELPS THIS CHILD")
+            } if (musicClicked && next3Clicked) {
+                console.log("MUSIC HELPS THIS CHILD")
+            }
             cancelAnimationFrame(scenarioThreeAnimationId)
             gsap.to('#overlap', {
                 opacity: 1,
                 onComplete: () => {
                     cancelAnimationFrame(beginSecondScenario)
-                    nextButton.setAttribute('hidden', true);
+                    nextButton3.setAttribute('hidden', true);
                     document.querySelectorAll('.schoolOptionButton').forEach((button) => {
                         button.setAttribute('hidden', true)
                     })
@@ -1207,7 +1307,6 @@ document.getElementById('yesButton').addEventListener('click', () => {
             }
         })
     }
-    console.log("THIS IS WHERE YOU WILL LOG THE SCORE EVENTUALLY")
 })
 
 function beginAudioGame() {
@@ -1232,58 +1331,67 @@ function beginAudioGame() {
 
     const animalContainer = document.getElementById('animal-container');
     let selectedAnimal = null;
-    let isAnimalSelected = false;
+    let playedAudio;
 
     catButton.addEventListener('click', function () {
         audio1.play();
         animalContainer.style.display = 'block';
+        playedAudio = 'cat'
     });
 
     frogButton.addEventListener('click', function () {
         audio2.play();
         animalContainer.style.display = 'block';
+        playedAudio = 'frog'
     });
 
     cowButton.addEventListener('click', function () {
         audio3.play();
         animalContainer.style.display = 'block';
+        playedAudio = 'cow'
     });
 
     cat.addEventListener('click', function () {
         selectedAnimal = 'cat';
-        isAnimalSelected = true;
+        if (playedAudio === 'cat') {
+            OVERALL_SCORE += 20
+            console.log(OVERALL_SCORE)
+        }
     });
 
     cow.addEventListener('click', function () {
         selectedAnimal = 'cow';
-        isAnimalSelected = true;
+        if (playedAudio === 'cow') {
+            OVERALL_SCORE += 20
+            console.log(OVERALL_SCORE)
+        }
     });
 
     frog.addEventListener('click', function () {
         selectedAnimal = 'frog';
-        isAnimalSelected = true;
+        if (playedAudio === 'frog') {
+            OVERALL_SCORE += 20
+            console.log(OVERALL_SCORE)
+        }
     });
 
     fox.addEventListener('click', function () {
         selectedAnimal = 'fox';
-        isAnimalSelected = true;
     });
 
     pig.addEventListener('click', function () {
         selectedAnimal = 'pig';
-        isAnimalSelected = true;
     });
 
     chicken.addEventListener('click', function () {
         selectedAnimal = 'chicken';
-        isAnimalSelected = true;
     });
 
     function checkAnimalSelection() {
-        if (isAnimalSelected) {
+        if (selectedAnimal !== null) {
             console.log('Selected animal:', selectedAnimal);
             selectedAnimal = null;
-            isAnimalSelected = false;
+            playedAudio = null;
             animalContainer.style.display = 'none';
         }
     }

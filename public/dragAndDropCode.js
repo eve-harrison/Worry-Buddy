@@ -9,9 +9,35 @@ backgroundImage.src = './img/ROOM.png'
 let playerIdle = new Image();
 playerIdle.src = './img/playerIdle.png'
 
+
+let boy = new Image();
+boy.src = './img/boyForClassroom.png'
+
+let robotImage2 = new Image();
+robotImage2.src = './img/robotTurningAround.png'
+
 let frameDelay = 0
 
-let anxietyScore = 0
+let preGameAnxietyLevel = 0
+
+const moveOnButton = document.getElementById("mainGameButton")
+moveOnButton.addEventListener("click", () => {
+    var anxietyScore = preGameAnxietyLevel;
+    sessionStorage.setItem("anxietyScore", anxietyScore);
+})
+
+const happyButton = document.getElementById("btn1")
+const dontCareButton = document.getElementById("btn2")
+const sadButton = document.getElementById("btn3")
+const worriedButton = document.getElementById("btn4")
+const scaredButton = document.getElementById("btn5")
+
+let nextButtonClicked = false
+let happyClicked = false
+let dontCareClicked = false
+let sadClicked = false
+let worriedClicked = false
+let scaredClicked = false
 
 document.getElementById("scene2").disabled = true
 
@@ -66,6 +92,109 @@ class Player {
 
 }
 
+class Sprite {
+    constructor({ x, y, width, height, image, frames }) {
+        this.position = {
+            x: x,
+            y: y
+        }
+        this.width = width
+        this.height = height
+        this.image = image
+        this.frames = frames
+
+        this.updatePosition = function (newPosition) {
+            c.clearRect(0, 0, canvas.width, canvas.height)
+            this.position = newPosition
+        }
+    }
+
+    draw() {
+        c.imageSmoothingEnabled = false
+        c.drawImage(this.image,
+            32 * this.frames,
+            0,
+            32,
+            32,
+            this.position.x,
+            this.position.y,
+            this.width,
+            this.height)
+    }
+    update() {
+        if (frameDelay == 3) {
+            this.frames++
+            frameDelay = 0
+        } else {
+            frameDelay++;
+        }
+        if (this.frames > 4) this.frames = 0
+        this.draw()
+    }
+}
+
+const robot = new Sprite({
+    x: 390,
+    y: 310,
+    width: 200,
+    height: 200,
+    image: robotImage2,
+    frames: 3
+})
+
+const robot2 = new Sprite({
+    x: 330,
+    y: 140,
+    width: 200,
+    height: 200,
+    image: robotImage2,
+    frames: 1
+})
+
+const robot3 = new Sprite({
+    x: 780,
+    y: 310,
+    width: 200,
+    height: 200,
+    image: robotImage2,
+    frames: 4
+})
+
+const robot4 = new Sprite({
+    x: 150,
+    y: 180,
+    width: 200,
+    height: 200,
+    image: robotImage2,
+    frames: 1
+})
+
+const robot5 = new Sprite({
+    x: 720,
+    y: 270,
+    width: 200,
+    height: 200,
+    image: robotImage2,
+    frames: 3
+})
+
+const robot6 = new Sprite({
+    x: 450,
+    y: 330,
+    width: 200,
+    height: 200,
+    image: robotImage2,
+    frames: 4
+})
+
+const robot7 = new Sprite({
+    x: 150,
+    y: 270,
+    width: 200,
+    height: 200,
+    image: robotImage2,
+    frames: 3
+})
 
 function writeUpNewSituation(speeds, textLines) {
     var characters = []
@@ -106,7 +235,42 @@ function writeUpNewSituation(speeds, textLines) {
 }
 
 
+happyButton.addEventListener("click", () => {
+    happyClicked = true;
+    checkClicks();
+})
+
+dontCareButton.addEventListener("click", () => {
+    dontCareClicked = true;
+    checkClicks();
+})
+
+sadButton.addEventListener("click", () => {
+    sadClicked = true;
+    checkClicks();
+})
+
+worriedButton.addEventListener("click", () => {
+    worriedClicked = true;
+    checkClicks();
+})
+
+scaredButton.addEventListener("click", () => {
+    scaredClicked = true;
+    checkClicks();
+})
+
+
 let player = new Player()
+let sprite1 = new Sprite({
+    x: 600,
+    y: 250,
+    width: 150,
+    height: 150,
+    image: playerIdle,
+    frames: 4
+})
+
 let sprites = []
 
 function animate() {
@@ -115,47 +279,7 @@ function animate() {
 }
 
 function updateAnxietyScore() {
-
-    let nextButtonClicked = false;
-    let happyClicked = false;
-    let dontCareClicked = false;
-    let sadClicked = false;
-    let worriedClicked = false;
-    let scaredClicked = false;
-
-    const happyButton = document.getElementById("btn1")
-    const dontCareButton = document.getElementById("btn2")
-    const sadButton = document.getElementById("btn3")
-    const worriedButton = document.getElementById("btn4")
-    const scaredButton = document.getElementById("btn5")
-
-    happyButton.addEventListener("click", () => {
-        happyClicked = true;
-        checkClicks();
-    });
-
-    dontCareButton.addEventListener("click", () => {
-        dontCareClicked = true;
-        checkClicks();
-    });
-
-    sadButton.addEventListener("click", () => {
-        sadClicked = true;
-        checkClicks();
-    });
-
-    worriedButton.addEventListener("click", () => {
-        worriedClicked = true;
-        checkClicks();
-    });
-
-    scaredButton.addEventListener("click", () => {
-        scaredClicked = true;
-        checkClicks();
-    });
-
     const nextButtons = document.querySelectorAll(".nextSceneButton")
-
     for (let i = 0; i < nextButtons.length; i++) {
         nextButtons[i].addEventListener("click", () => {
             nextButtonClicked = true;
@@ -165,37 +289,31 @@ function updateAnxietyScore() {
 
     function checkClicks() {
         if (happyClicked && nextButtonClicked) {
-            anxietyScore -= 1
-            document.getElementById("anxietyLevel").innerHTML = anxietyScore;
+            preGameAnxietyLevel -= 1
+            document.getElementById("anxietyLevel").innerHTML = preGameAnxietyLevel
             happyClicked = false;
             nextButtonClicked = false;
         }
-        if (dontCareClicked && nextButtonClicked) {
-            document.getElementById("anxietyLevel").innerHTML = anxietyScore;
-            dontCareClicked = false;
-            nextButtonClicked = false;
-        }
         if (sadClicked && nextButtonClicked) {
-            anxietyScore += 1
-            document.getElementById("anxietyLevel").innerHTML = anxietyScore;
+            preGameAnxietyLevel += 1
+            document.getElementById("anxietyLevel").innerHTML = preGameAnxietyLevel
             sadClicked = false;
             nextButtonClicked = false;
         }
         if (worriedClicked && nextButtonClicked) {
-            anxietyScore += 2
-            document.getElementById("anxietyLevel").innerHTML = anxietyScore;
+            preGameAnxietyLevel += 2
+            document.getElementById("anxietyLevel").innerHTML = preGameAnxietyLevel
             worriedClicked = false;
             nextButtonClicked = false;
         }
         if (scaredClicked && nextButtonClicked) {
-            anxietyScore += 3
-            document.getElementById("anxietyLevel").innerHTML = anxietyScore;
+            preGameAnxietyLevel += 3
+            document.getElementById("anxietyLevel").innerHTML = preGameAnxietyLevel
             scaredClicked = false;
             nextButtonClicked = false;
         }
     }
 }
-
 
 function enableNextButton() {
     updateAnxietyScore()
@@ -226,12 +344,22 @@ function moveToSceneTwo() {
     buttons.forEach(button => {
         button.addEventListener('click', () => {
             if (activeButton) {
-                activeButton.classList.remove('active');
+                button.style.backgroundColor = 'a5958c'
             }
-            button.classList.add('active');
+            button.style.backgroundColor = 'rgb(200, 255, 0)'
             activeButton = button;
         });
     });
+
+
+    var pos = { x: 610, y: 250 }
+    player.updatePosition(pos)
+    player.draw()
+
+    robot.draw()
+    robot2.draw()
+    robot3.draw()
+    robot4.draw()
 
     writeUpNewSituation(speeds = {
         pause: 500,
@@ -243,6 +371,7 @@ function moveToSceneTwo() {
         { speed: speeds.normal, string: "Sam has to go to crowded places all the time. " },
         { speed: speeds.normal, string: "How do crowded places make YOU feel?" }
     ])
+
 }
 
 function moveToSceneThree() {
@@ -251,6 +380,13 @@ function moveToSceneThree() {
 
     document.getElementById("scene3").style.display = "none"
     document.getElementById("scene4").style.display = "block"
+
+
+    document.querySelectorAll('.emotionButton').forEach(function (button) {
+        button.style.backgroundColor = "#a5958c"
+        button.style.border = "none"
+    });
+
     writeUpNewSituation(speeds = {
         pause: 500,
         slow: 120,
@@ -262,7 +398,13 @@ function moveToSceneThree() {
         { speed: speeds.normal, string: "Click the emotion Sam is feeling." }
     ])
 
-    player.updatePosition({ x: 750, y: 100 })
+    var pos = { x: 700, y: 100 }
+    player.updatePosition(pos)
+    player.draw()
+
+    robot5.draw()
+    robot6.draw()
+    robot7.draw()
 
 }
 
@@ -270,6 +412,13 @@ function moveToSceneFour() {
     document.getElementById("situationText").innerText = ""
     document.getElementById("scene4").style.display = "none"
     document.getElementById("scene5").style.display = "block"
+
+
+    document.querySelectorAll('.emotionButton').forEach(function (button) {
+        button.style.backgroundColor = "#a5958c"
+        button.style.border = "none"
+    });
+
     writeUpNewSituation(speeds = {
         pause: 500,
         slow: 120,
