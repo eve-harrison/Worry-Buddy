@@ -229,6 +229,53 @@
         border-radius: 12px;
         position: absolute;
     }
+
+    #popup-container,
+    #tryAgainPopupContainer {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 9999;
+    }
+
+    #popup-content,
+    #tryAgainPopupContent {
+        position: absolute;
+        width: 400px;
+        height: 200px;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+        text-align: center;
+        font-family: 'Comic Sans MS', cursive, sans-serif;
+    }
+
+    #close-btn,
+    #popup-close-btn {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        font-size: 18px;
+        background-color: #45c61e;
+        border: none;
+        border-radius: 5px;
+        color: white;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        transition-duration: 0.4s;
+        cursor: pointer;
+        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+        font-family: 'Comic Sans MS', cursive, sans-serif;
+    }
 </style>
 
 
@@ -236,6 +283,23 @@
     opacity:0; pointer-events:none;z-index:10;">
 </div>
 <canvas></canvas>
+<div id="popup-container" style="display:none;">
+    <div id="popup-content">
+        <p>You've reached a checkpoint! Follow the instructions on screen to help
+            Sam focus on their breathing to make sure they're ready to handle the rest
+            of the course!
+        </p>
+        <button id="close-btn">Close</button>
+    </div>
+</div>
+<div id="tryAgainPopupContainer" style="display:none;">
+    <div id="tryAgainPopupContent">
+        <p> Try Again! Sam has fallen through a gap in the platform.
+            Jump over the gaps with the up arrow!
+        </p>
+        <button id="popup-close-btn">Close</button>
+    </div>
+</div>
 <div id="welcomePlayerContainer">
     <div id="speech-bubble">
         <p id="welcome"> WELCOME PLAYER! </p>
