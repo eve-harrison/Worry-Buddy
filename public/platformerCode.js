@@ -5,6 +5,80 @@ playButton.addEventListener('click', () => {
     welcomePlayer.style.display = 'none'
 });
 
+function holdSpaceBarForTimeLimit(timeLimitInSeconds, timerObject) {
+    let isHoldingSpaceBar = false;
+    let timerId = null;
+    let remainingTime = timeLimitInSeconds * 1000;
+
+    const timerElement = document.createElement('div');
+    timerElement.style.fontSize = '28px';
+    timerElement.style.position = 'absolute'
+    timerElement.style.fontWeight = 'bolder'
+    timerElement.style.backgroundColor = 'white'
+    document.body.appendChild(timerElement);
+
+    const handleKeyDown = (event) => {
+        if (event.code === 'Space' && !isHoldingSpaceBar) {
+            isHoldingSpaceBar = true;
+            startTimer();
+        }
+    };
+
+    const handleKeyUp = () => {
+        isHoldingSpaceBar = false;
+        clearTimeout(timerId);
+        updateTimer();
+    };
+
+    const updateTimer = () => {
+        const seconds = Math.floor(remainingTime / 1000);
+        let message;
+        if (remainingTime <= timeLimitInSeconds * 500) {
+            message = 'Hold down the SPACE BAR and make sure to Breathe OUT ';
+        } else {
+            message = 'Hold down the SPACE BAR and Breathe IN ';
+        }
+        timerElement.textContent = `${message} for ${seconds} more second${seconds === 1 ? '' : 's'}`;
+    };
+
+    const startTimer = () => {
+        const startTime = Date.now();
+        timerId = setInterval(() => {
+            const elapsedTime = Date.now() - startTime;
+            remainingTime = Math.max(0, timeLimitInSeconds * 1000 - elapsedTime);
+            if (remainingTime <= 0) {
+                clearInterval(timerId);
+                if (isHoldingSpaceBar) {
+                    timerElement.textContent = 'Good job!';
+                    timerElement.style.fontSize = '50px'
+                    timerElement.style.color = 'green'
+                    setTimeout(() => {
+                        timerElement.style.display = 'none'
+                        animate()
+                    }, 500);
+                }
+            } else {
+                updateTimer();
+            }
+        }, 10);
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('keyup', handleKeyUp);
+
+    updateTimer();
+}
+
+
+document.getElementById('close-btn').addEventListener('click', () => {
+    document.getElementById('popup-container').style.display = 'none';
+    holdSpaceBarForTimeLimit(10, timer);
+})
+
+document.getElementById('popup-close-btn').addEventListener('click', () => {
+    document.getElementById('tryAgainPopupContainer').style.display = 'none';
+})
+
 
 const canvas = document.querySelector('canvas')
 const c = canvas.getContext('2d')
@@ -39,6 +113,9 @@ greenBox.src = './img/greenBox.png'
 
 let single_flag = new Image();
 single_flag.src = './img/flag1.png'
+
+let timerImage = new Image();
+timerImage.src = './img/timer.png'
 
 let playerIdle = new Image();
 playerIdle.src = './img/playerIdle.png'
@@ -182,8 +259,17 @@ class DrawObject {
     }
 }
 
-let scenarioBox_1 = new DrawObject({
+
+let timer = new DrawObject({
     x: 3500,
+    y: -30,
+    image: timerImage,
+    width: timerImage.width,
+    height: timerImage.height
+})
+
+let scenarioBox_1 = new DrawObject({
+    x: 2050,
     y: 80,
     image: pinkBox,
     width: pinkBox.width,
@@ -332,6 +418,15 @@ function gameStart() {
         image: hill
     })]
 
+
+    timer = new DrawObject({
+        x: 3500,
+        y: -30,
+        image: timerImage,
+        width: timerImage.width,
+        height: timerImage.height
+    })
+
     scenarioBox_1 = new DrawObject({
         x: 500,
         // x: 3500,
@@ -378,6 +473,7 @@ function gameStart() {
     mysteryBoxes.push(scenarioBox_3)
     mysteryBoxes.push(audioBox)
     mysteryBoxes.push(visualBox)
+    mysteryBoxes.push(timer)
 
     flag = new DrawObject({
         x: 9500,
@@ -470,8 +566,16 @@ function animate() {
     })
 
     if (player.position.y > canvas.height) {
-        console.log("YOU LOSE")
-        gameStart()
+        document.getElementById('tryAgainPopupContainer').style.display = 'block';
+        player.position.y = 100
+        player.position.x = player.position.x - 150
+    }
+
+    if (player.collidesWith(timer)) {
+        document.getElementById('popup-container').style.display = 'block';
+        cancelAnimationFrame(animationId)
+        timer.position.x = -700
+        timer.position.y = -700
     }
 
     if (player.collidesWith(scenarioBox_1)) {
