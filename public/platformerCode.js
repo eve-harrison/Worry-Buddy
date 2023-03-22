@@ -89,7 +89,10 @@ const gravity = 0.5
 let foodClickCount = 0
 let selectedAnAnimalCount = 0
 let frameDelay = 0
-let scenarioAnimationId
+let scenarioOneAnimationId
+let scenarioTwoAnimationId
+let scenarioThreeAnimationId
+
 
 let score = 0
 
@@ -132,12 +135,11 @@ playerRunningLeft.src = './img/playerRunningLeft.png'
 let playerJumping = new Image();
 playerJumping.src = './img/playerJumpingRight.png'
 
-let platforms = []
-let backgroundObjects = []
 let mysteryBoxes = []
 let flags = []
 let differentFoodTypes = []
 let differentDrinkTypes = []
+let scroll = 0
 
 let keys = {
     up: {
@@ -150,7 +152,6 @@ let keys = {
         pressed: false
     }
 }
-let scroll = 0
 
 class Player {
     constructor() {
@@ -259,6 +260,101 @@ class DrawObject {
     }
 }
 
+let platforms = [new DrawObject({
+    x: -1, y: 450,
+    image: groundImage
+}),
+
+new DrawObject({
+    x: groundImage.width - 38, y: 450,
+    image: groundImage
+}),
+
+new DrawObject({
+    x: (2 * groundImage.width) - 70, y: 450,
+    image: groundImage
+}),
+
+new DrawObject({
+    x: (3 * groundImage.width) + 150, y: 450,
+    image: groundImage
+}),
+
+new DrawObject({
+    x: (4 * groundImage.width) + 500, y: 450,
+    image: groundImage
+}),
+
+new DrawObject({
+    x: (5 * groundImage.width) + 450, y: 450,
+    image: groundImage
+}),
+
+new DrawObject({
+    x: (6 * groundImage.width) + 450, y: 450,
+    image: groundImage
+}),
+
+new DrawObject({
+    x: (7 * groundImage.width) + 750, y: 450,
+    image: groundImage
+}),
+
+new DrawObject({
+    x: (8 * groundImage.width) + 750, y: 450,
+    image: groundImage
+}),
+
+new DrawObject({
+    x: (9 * groundImage.width) + 750, y: 250,
+    image: groundImage
+}),
+
+new DrawObject({
+    x: (10 * groundImage.width) + 750, y: 450,
+    image: groundImage
+}),
+
+new DrawObject({
+    x: (11 * groundImage.width) + 900, y: 250,
+    image: groundImage
+}),
+
+new DrawObject({
+    x: (12 * groundImage.width) + 1200, y: 450,
+    image: groundImage
+}),
+
+new DrawObject({
+    x: (13 * groundImage.width) + 1200, y: 450,
+    image: groundImage
+})]
+
+let backgroundObjects = [new DrawObject({
+    x: -1, y: -1,
+    image: backgroundImage
+}),
+
+new DrawObject({
+    x: -1, y: -1,
+    image: hill
+}),
+
+new DrawObject({
+    x: (4 * groundImage.width) + 30, y: 20,
+    image: hill
+}),
+
+new DrawObject({
+    x: (6 * groundImage.width) + 30, y: 10,
+    image: hill
+}),
+
+new DrawObject({
+    x: (9 * groundImage.width) + 30, y: 10,
+    image: hill
+})]
+
 
 let timer = new DrawObject({
     x: 3500,
@@ -308,6 +404,13 @@ let visualBox = new DrawObject({
     height: greenBox.height
 })
 
+mysteryBoxes.push(scenarioBox_1)
+mysteryBoxes.push(scenarioBox_2)
+mysteryBoxes.push(scenarioBox_3)
+mysteryBoxes.push(audioBox)
+mysteryBoxes.push(visualBox)
+mysteryBoxes.push(timer)
+
 let flag = new DrawObject({
     x: 9500,
     y: 95,
@@ -316,183 +419,11 @@ let flag = new DrawObject({
     height: single_flag.height
 })
 
-function gameStart() {
-    console.log("game start")
-    player = new Player()
-
-    if (minigame.initiated) return
-
-    platforms = [new DrawObject({
-        x: -1, y: 450,
-        image: groundImage
-    }),
-
-    new DrawObject({
-        x: groundImage.width - 38, y: 450,
-        image: groundImage
-    }),
-
-    new DrawObject({
-        x: (2 * groundImage.width) - 70, y: 450,
-        image: groundImage
-    }),
-
-    new DrawObject({
-        x: (3 * groundImage.width) + 150, y: 450,
-        image: groundImage
-    }),
-
-    new DrawObject({
-        x: (4 * groundImage.width) + 500, y: 450,
-        image: groundImage
-    }),
-
-    new DrawObject({
-        x: (5 * groundImage.width) + 450, y: 450,
-        image: groundImage
-    }),
-
-    new DrawObject({
-        x: (6 * groundImage.width) + 450, y: 450,
-        image: groundImage
-    }),
-
-    new DrawObject({
-        x: (7 * groundImage.width) + 750, y: 450,
-        image: groundImage
-    }),
-
-    new DrawObject({
-        x: (8 * groundImage.width) + 750, y: 450,
-        image: groundImage
-    }),
-
-    new DrawObject({
-        x: (9 * groundImage.width) + 750, y: 250,
-        image: groundImage
-    }),
-
-    new DrawObject({
-        x: (10 * groundImage.width) + 750, y: 450,
-        image: groundImage
-    }),
-
-    new DrawObject({
-        x: (11 * groundImage.width) + 900, y: 250,
-        image: groundImage
-    }),
-
-    new DrawObject({
-        x: (12 * groundImage.width) + 1200, y: 450,
-        image: groundImage
-    }),
-
-    new DrawObject({
-        x: (13 * groundImage.width) + 1200, y: 450,
-        image: groundImage
-    })]
-
-
-    backgroundObjects = [new DrawObject({
-        x: -1, y: -1,
-        image: backgroundImage
-    }),
-
-    new DrawObject({
-        x: -1, y: -1,
-        image: hill
-    }),
-
-    new DrawObject({
-        x: (4 * groundImage.width) + 30, y: 20,
-        image: hill
-    }),
-
-    new DrawObject({
-        x: (6 * groundImage.width) + 30, y: 10,
-        image: hill
-    }),
-
-    new DrawObject({
-        x: (9 * groundImage.width) + 30, y: 10,
-        image: hill
-    })]
-
-
-    timer = new DrawObject({
-        x: 3500,
-        y: -30,
-        image: timerImage,
-        width: timerImage.width,
-        height: timerImage.height
-    })
-
-    scenarioBox_1 = new DrawObject({
-        x: 500,
-        // x: 3500,
-        y: 80,
-        image: pinkBox,
-        width: pinkBox.width,
-        height: pinkBox.height
-    })
-
-    scenarioBox_2 = new DrawObject({
-        x: 5300,
-        y: 80,
-        image: pinkBox,
-        width: pinkBox.width,
-        height: pinkBox.height
-    })
-
-    scenarioBox_3 = new DrawObject({
-        x: 7200,
-        y: 80,
-        image: pinkBox,
-        width: pinkBox.width,
-        height: pinkBox.height
-    })
-
-    audioBox = new DrawObject({
-        x: 8700,
-        y: 80,
-        image: redBox,
-        width: redBox.width,
-        height: redBox.height
-    })
-
-    visualBox = new DrawObject({
-        x: 6500,
-        y: -40,
-        image: greenBox,
-        width: greenBox.width,
-        height: greenBox.height
-    })
-
-    mysteryBoxes.push(scenarioBox_1)
-    mysteryBoxes.push(scenarioBox_2)
-    mysteryBoxes.push(scenarioBox_3)
-    mysteryBoxes.push(audioBox)
-    mysteryBoxes.push(visualBox)
-    mysteryBoxes.push(timer)
-
-    flag = new DrawObject({
-        x: 9500,
-        y: 95,
-        image: single_flag,
-        width: single_flag.width,
-        height: single_flag.height
-    })
-
-    flags.push(flag)
-
-
-    scroll = 0
-}
+flags.push(flag)
 
 const minigame = {
     initiated: false
 }
-
 
 function animate() {
     const animationId = requestAnimationFrame(animate)
@@ -569,6 +500,12 @@ function animate() {
         document.getElementById('tryAgainPopupContainer').style.display = 'block';
         player.position.y = 100
         player.position.x = player.position.x - 150
+        if (player.position.y > canvas.height) {
+            player.position.x = player.position.x - 50
+        }
+        if (player.position.y > canvas.height) {
+            player.position.y = player.position.y + 100
+        }
     }
 
     if (player.collidesWith(timer)) {
@@ -706,8 +643,6 @@ function animate() {
 
         })
     } if (player.collidesWith(flag)) {
-        console.log("YOU WIN")
-
         cancelAnimationFrame(animationId)
 
         var winDiv = document.createElement("div");
@@ -753,7 +688,6 @@ function animate() {
 }
 
 animate()
-gameStart()
 
 const visualBackground = new Image();
 visualBackground.src = './img/visualGameBackground.png'
@@ -798,10 +732,6 @@ class Sprite {
         }
         if (this.frames > 4) this.frames = 0
         this.draw()
-    }
-
-    destroy() {
-        this.image = null
     }
 }
 
@@ -1044,16 +974,8 @@ var foodDiv = createTextDiv(foodText, '250px', '100px', '460px', '780px');
 let textBox = []
 textBox.push(foodDiv)
 
-
-let animationComplete = false;
-
 function beginFirstScenario() {
-
-    if (animationComplete) {
-        return;
-    }
-
-    scenarioAnimationId = requestAnimationFrame(beginFirstScenario);
+    scenarioOneAnimationId = requestAnimationFrame(beginFirstScenario);
     schoolRoomBackground.draw();
 
     differentFoodTypes.forEach(food => {
@@ -1067,6 +989,7 @@ function beginFirstScenario() {
     playerOne.update();
 
     if (foodClickCount >= 3) {
+        cancelAnimationFrame(scenarioOneAnimationId);
         gsap.to('#overlap', {
             opacity: 1,
             onComplete: () => {
@@ -1074,8 +997,6 @@ function beginFirstScenario() {
                 gsap.to('#overlap', {
                     opacity: 0,
                     onComplete: () => {
-                        cancelAnimationFrame(scenarioAnimationId);
-                        animationComplete = true;
                         animate()
                     }
                 });
@@ -1116,6 +1037,7 @@ document.querySelectorAll('.optionButton').forEach((button) => {
         nextButton.innerText = 'Finish';
         document.body.appendChild(nextButton);
         nextButton.addEventListener('click', () => {
+            cancelAnimationFrame(scenarioTwoAnimationId)
             gsap.to('#overlap', {
                 opacity: 1,
                 onComplete: () => {
@@ -1139,6 +1061,7 @@ document.querySelectorAll('.optionButton').forEach((button) => {
 })
 
 function beginSecondScenario() {
+    scenarioTwoAnimationId = requestAnimationFrame(beginSecondScenario);
     bedroomBackground.draw()
 
     document.getElementById('optionBar').style.display = 'block'
@@ -1212,6 +1135,7 @@ document.querySelectorAll('.schoolOptionButton').forEach((button) => {
         nextButton.innerText = 'Finish';
         document.body.appendChild(nextButton);
         nextButton.addEventListener('click', () => {
+            cancelAnimationFrame(scenarioThreeAnimationId)
             gsap.to('#overlap', {
                 opacity: 1,
                 onComplete: () => {
@@ -1235,6 +1159,7 @@ document.querySelectorAll('.schoolOptionButton').forEach((button) => {
 })
 
 function beginThirdScenario() {
+    scenarioThreeAnimationId = requestAnimationFrame(beginThirdScenario);
     classroom.draw()
 
     document.getElementById('schoolOptionBar').style.display = 'block'
