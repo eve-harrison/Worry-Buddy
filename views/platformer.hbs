@@ -9,8 +9,8 @@
 
     #welcomePlayerContainer {
         position: absolute;
-        top: 100;
-        left: 200;
+        top: 40;
+        left: 80;
         display: grid;
         grid-template-columns: repeat(2, 1fr);
         width: 1100px;
@@ -34,7 +34,7 @@
         right: 30;
         margin: 10px;
         font-size: 24px;
-        background-color: #45c61e;
+        background-color: red;
         border: none;
         border-radius: 5px;
         color: white;
@@ -63,7 +63,7 @@
 
     .next-button {
         font-size: 24px;
-        background-color: #2e8415;
+        background-color: red;
         border: none;
         border-radius: 5px;
         color: white;
@@ -88,7 +88,7 @@
     #schoolOptionBar {
         position: absolute;
         bottom: 0;
-        left: 500px;
+        left: 450px;
         height: 100px;
         z-index: 10;
         margin: 0;
@@ -137,9 +137,18 @@
         padding: 10px 20px;
     }
 
+    #animal-container {
+        background-color: white;
+        padding-left: 20px;
+    }
+
     .animal:active {
         box-shadow: 0 5px #666;
         transform: translateY(4px);
+    }
+
+    #animalButtonsDiv {
+        padding-left: 10px;
     }
 
     .animalButton {
@@ -170,11 +179,14 @@
     }
 
     #selectAnimal {
-        font-size: 24px;
-        color: #333;
-        font-family: 'Comic Sans MS', cursive, sans-serif;
+        font-size: 18px;
+        color: #000000;
+        font-family: 'Courier New', Courier, monospace;
+        font-weight: bold;
+        padding-left: 20px;
         line-height: 1.5;
-        margin-bottom: 20px;
+        margin-bottom: 30px;
+        align-items: center;
     }
 
     #selectedAnimal {
@@ -193,7 +205,6 @@
         border: none;
         border-radius: 5px;
         color: white;
-        padding: 10px 20px;
         text-align: center;
         display: inline-block;
         cursor: pointer;
@@ -239,6 +250,7 @@
         height: 100%;
         background-color: rgba(0, 0, 0, 0.5);
         z-index: 9999;
+        justify-content: center;
     }
 
     #popup-content,
@@ -255,6 +267,7 @@
         box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
         text-align: center;
         font-family: 'Comic Sans MS', cursive, sans-serif;
+        font-size: 20px;
     }
 
     #close-btn,
@@ -263,7 +276,7 @@
         bottom: 10px;
         right: 10px;
         font-size: 18px;
-        background-color: #45c61e;
+        background-color: red;
         border: none;
         border-radius: 5px;
         color: white;
@@ -276,6 +289,29 @@
         box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
         font-family: 'Comic Sans MS', cursive, sans-serif;
     }
+
+    #resultsDiv {
+        position: fixed;
+        height: 576px;
+        width: 95%;
+        background-color: wheat;
+    }
+
+    #playerImage {
+        width: 150px;
+        height: 150px;
+        position: fixed;
+        bottom: 50;
+        left: 50;
+    }
+
+    #playerImage2 {
+        width: 150px;
+        height: 150px;
+        position: fixed;
+        bottom: 50;
+        right: 50;
+    }
 </style>
 
 
@@ -285,17 +321,17 @@
 <canvas></canvas>
 <div id="popup-container" style="display:none;">
     <div id="popup-content">
-        <p>You've reached a checkpoint! Follow the instructions on screen to help
-            Sam focus on their breathing to make sure they're ready to handle the rest
-            of the course!
+        <p>To help Sam do their best, we're going to take a moment to focus on our breathing. Just follow the
+            instructions on the screen, and you'll be ready to tackle
+            the rest of the course like a pro!
         </p>
         <button id="close-btn">Close</button>
     </div>
 </div>
 <div id="tryAgainPopupContainer" style="display:none;">
     <div id="tryAgainPopupContent">
-        <p> Try Again! Sam has fallen through a gap in the platform.
-            Jump over the gaps with the up arrow!
+        <p> Oops! Sam fell through the gap! You can help her by jumping over the gaps using
+            the up arrow. Let's try again!
         </p>
         <button id="popup-close-btn">Close</button>
     </div>
@@ -303,11 +339,10 @@
 <div id="welcomePlayerContainer">
     <div id="speech-bubble">
         <p id="welcome"> WELCOME PLAYER! </p>
-        <p id="howToPlay">To win the game, make it to the end of the track
-            with the highest score
+        <p id="howToPlay">You can win the game! Make it to the finish flag with the highest score possible, and you'll
+            be the winner! Are you ready to take on this challenge?
         </p>
-        <p id="hint"> (HINT) Jump up to tap all the mystery boxes along
-            the way!
+        <p id="hint"> Here's a hint: Jump up to touch all the mystery boxes as you go!
         </p>
     </div>
     <div id="welcomeText">
@@ -341,9 +376,9 @@
 </div>
 <div id="optionBar" style="display:none;">
     <div id="buttonContainer">
-        <button id="walkBtn" class="optionButton">Walk</button>
-        <button id="sleepBtn" class="optionButton">Sleep</button>
-        <button id="friendBtn" class="optionButton">Call a friend</button>
+        <button id="walkBtn" class="optionButton">Go for a Walk</button>
+        <button id="sleepBtn" class="optionButton">Go to Sleep</button>
+        <button id="friendBtn" class="optionButton">Play with a friend</button>
     </div>
 </div>
 <div id="schoolOptionBar" style="display:none;">
@@ -359,8 +394,8 @@
         <button id="frogButton" class="animalButton">Play Sound</button>
         <button id="cowButton" class="animalButton">Play Sound</button>
     </div>
+    <p id="selectAnimal">Press the button to play and animal sound. Click on the animal you could hear! </p>
     <div id="animal-container">
-        <p id="selectAnimal">Select the animal you heard:</p>
         <img src="./img/audioGameData/cat.png" alt="Cat" id="cat" class="animal">
         <img src="./img/audioGameData/chicken.png" alt="Chicken" id="chicken" class="animal">
         <img src="./img/audioGameData/fox.png" alt="Fox" id="fox" class="animal">
@@ -370,9 +405,54 @@
     </div>
     <p id="selectedAnimal"></p>
     <div id="confirmSelection" style="display:none;">
-        <button id="noButton" class="decisionButton"> Play again </button>
+        <button id="noButton" class="decisionButton"> No. Choose again. </button>
         <button id="yesButton" class="decisionButton"> Yes </button>
     </div>
+</div>
+<div id="resultsDiv"
+    style="display: none; font-family: Arial, sans-serif; font-size: 16px; line-height: 1.5; color: #333;">
+    <h2 style="font-size: 28px; font-weight: bold; margin-bottom: 10px; margin-left: 20px; white-space: nowrap;">Based
+        on your child's response to 'The Worry Buddy', the following results have been concluded:</h2>
+    <ul style="list-style-type: disc; margin-left: 20px;">
+        <li style="margin-bottom: 10px;">In the pretest for anxiety, your child score was :
+            <span id="anxietyLevel" style="font-weight: bold;"></span>. <br>
+            <span id="anxietyLevelAdvice"></span>
+        </li>
+        <li style="margin-bottom: 10px;">In one of our minigames, your child selected for Sam to :
+            <span id="copingMethodChosen" style="font-weight: bold;"></span> when she first arrived at school. <br>
+            <span id="copingMethodAdvice"></span>
+        </li>
+        <li style="margin-bottom: 10px;">As a lunch for Sam, your child selected :
+            <span id="foodSelectedGame" style="font-weight: bold;"></span> <br>
+            Did you know that what we eat can have an impact on our mood and mental health? Encourage your child to
+            continue making healthy food choices, which can help them feel good both physically and mentally.
+        </li>
+        <li id="sleepChosen" style="display: none;margin-bottom: 10px;">In one of our minigames, your child selected
+            going to sleep over going for a walk or seeing a friend.Getting enough sleep is important for both our
+            physical and mental health. Encourage your child to prioritize a regular sleep schedule and establish
+            a relaxing bedtime routine to help them wind down at night. If your child
+            is consistently feeling tired or having trouble sleeping, it may be a good idea to talk to their
+            healthcare provider.
+        </li>
+        <li id="friendChosen" style="display: none; margin-bottom: 10px;">In one of our minigames, your child
+            selected seeing a friend over going to sleep or exercising. Socializing with friends is an important part of
+            our mental and emotional well-being. Encourage your child to spend time with friends and engage in
+            activities they enjoy together. Plan playdates or outings to help your child stay connected with their
+            peers. If your child is having trouble making friends or
+            seems hesitant to socialize, try practicing social skills with them or seeking guidance from a school
+            counselor or healthcare provider.
+        </li>
+        <li id="walkChosen" style="display: none; margin-bottom: 0px;">In one of our minigames, your child selected
+            exercising over going to sleep or seeing a friend. Exercise is a great way to boost our physical and mental
+            health, improving mood and reducing stress. Encourage your child to engage in regular physical activity,
+            such as playing sports or
+            going for walks. You can also try exercising together as a family to make it more fun and engaging. If your
+            child is hesitant to exercise, try finding activities they enjoy or setting achievable goals to help them
+            stay motivated.
+        </li>
+    </ul>
+    <img id="playerImage" src="./img/playerForSignInScreen.png" alt="Player">
+    <img id="playerImage2" src="./img/playerForRegisterScreen.png" alt="Player">
 </div>
 
 
