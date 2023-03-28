@@ -2,9 +2,9 @@ const express = require('express');
 const mysql = require("mysql");
 const path = require("path");
 const dotenv = require('dotenv');
+const session = require('express-session');
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
-
 
 dotenv.config({ path: './.env' });
 
@@ -20,9 +20,9 @@ const db = mysql.createConnection({
 const publicDir = path.join(__dirname, './public');
 
 app.use(express.static(publicDir));
-app.use(express.urlencoded({ extended: 'false' }));
+app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
-app.use(express({
+app.use(session({
     secret: 'secret',
     resave: true,
     saveUninitialized: true
@@ -68,22 +68,40 @@ app.get("/dragAndDrop", (req, res) => {
 
 app.post("/auth/register", (req, res) => {
     const { name, email, password, password_confirm } = req.body;
-    db.query('SELECT email FROM users WHERE email = ?', [email], async (error, result) => {
+    if (!name || !email || !password || !password_confirm) {
+        return res.render('register', {
+            message: 'Please fill in all fields'
+        });
+    }
+    if (password !== password_confirm) {
+        return res.render('register', {
+            message: 'Passwords do not match'
+        });
+    }
+    // Escape any special characters in the email input to prevent SQL injection
+    const escapedEmail = mysql.escape(email);
+    db.query(`SELECT email FROM users WHERE email = ${escapedEmail}`, async (error, result) => {
         if (error) {
             console.log(error);
+            return res.render('register', {
+                message: 'An error occurred. Please try again later'
+            });
         }
         if (result.length > 0) {
             return res.render('register', {
                 message: 'This email is already being used. Try logging in instead'
             });
-        } else if (password !== password_confirm) {
-            return res.render('register', {
-                message: 'Passwords do not match'
-            });
         }
         let hashedPassword = await bcrypt.hash(password, 8);
-        res.redirect('/login');
-        console.log(hashedPassword);
+        db.query(`INSERT INTO users (name, email, password) VALUES (?, ?, ?)`, [name, email, hashedPassword], (error, result) => {
+            if (error) {
+                console.log(error);
+                return res.render('register', {
+                    message: 'An error occurred. Please try again later'
+                });
+            }
+            res.redirect('/login');
+        });
     });
 });
 
@@ -99,7 +117,7 @@ app.post('/auth/login', (req, res) => {
                 req.session.loggedin = true;
                 req.session.email = email;
                 req.session.password = password;
-                res.redirect('/platformer');
+                res.redirect('/dragAndDrop');
             }
         });
     } else {
@@ -110,14 +128,53 @@ app.post('/auth/login', (req, res) => {
 });
 
 
-app.post('/game', (req, res) => {
+app.post('/platformer', (req, res) => {
     const { score } = req.body;
     const email = req.session.email;
 
-    res.send(`Score ${score} recorded for user ${email}`);
+    if (!email) {
+        return res.status(401).send('Unauthorized');
+    }
+
+    db.query('UPDATE users SET score = ? WHERE email = ?', [score, email], (error, result) => {
+        if (error) {
+            console.log(error);
+            return res.status(500).send('Error saving score');
+        }
+
+        res.send(`Score ${score} recorded for user ${email}`);
+    });
 });
 
 
+app.get("/platformer", (req, res) => {
+    if (req.session.loggedin) {
+        res.render("platformer", {
+            saveScoreUrl: '/save-score' // Add this line to pass the URL to the view
+        });
+    } else {
+        res.redirect("/login");
+    }
+});
+
+app.post('/save-score', (req, res) => {
+    const { score } = req.body;
+    const email = req.session.email;
+
+    if (!email) {
+        return res.status(401).send('Unauthorized');
+    }
+
+    db.query('UPDATE users SET score = ? WHERE email = ?', [score, email], (error, result) => {
+        if (error) {
+            console.log(error);
+            return res.status(500).send('Error saving score');
+        }
+
+        res.send(`Score ${score} recorded for user ${email}`);
+    });
+});
+
 app.listen(5000, () => {
-    console.log("server started on port 5000")
-})
+    console.log("server started on port 5000");
+});
