@@ -18,6 +18,12 @@
             color: #4CAF50;
         }
 
+        #smallPrint {
+            font-size: 20px;
+            font-weight: bolder;
+            color: #4CAF50;
+        }
+
         #loginNavBar {
             background-color: #fff;
             border-radius: 10px;
@@ -112,6 +118,7 @@
 
     <div id="mainContainer">
         <div id="title">Sign Up Here! </div>
+        <div id="smallPrint">You have to sign up to play game </div>
         <div id="loginOrRegister">
             <form action="/auth/register" method="POST">
                 <label for="name-reg" class="form-label">Enter your name : </label>
@@ -127,10 +134,9 @@
                 <input type="password" class="inputArea" id="password-conf-reg" name="password_confirm">
 
                 <img id="playerImage" src="./img/playerForRegisterScreen.png" alt="Player">
-                <button type="submit">Sign up</button>
+                <button id="signUpButton" type="submit">Sign up</button>
             </form>
         </div>
-    </div>
     </div>
 </body>
 

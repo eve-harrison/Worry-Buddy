@@ -9,6 +9,7 @@ backgroundImage.src = './img/ROOM.png'
 let playerIdle = new Image();
 playerIdle.src = './img/playerIdle.png'
 
+let sceneFive = false
 
 let boy = new Image();
 boy.src = './img/boyForClassroom.png'
@@ -343,11 +344,13 @@ function moveToSceneTwo() {
     let activeButton = null;
     buttons.forEach(button => {
         button.addEventListener('click', () => {
-            if (activeButton) {
-                button.style.backgroundColor = 'a5958c'
+            if (activeButton !== button) {
+                if (activeButton) {
+                    activeButton.style.backgroundColor = 'a5958c';
+                }
+                button.style.backgroundColor = 'rgb(200, 255, 0)';
+                activeButton = button;
             }
-            button.style.backgroundColor = 'rgb(200, 255, 0)'
-            activeButton = button;
         });
     });
 
@@ -395,7 +398,7 @@ function moveToSceneThree() {
         { speed: speeds.slow, string: "Today is show and tell!" },
         { speed: speeds.pause, string: "", pause: true },
         { speed: speeds.normal, string: "Sam has to speak in front of the class. " },
-        { speed: speeds.normal, string: "Click the emotion Sam is feeling." }
+        { speed: speeds.normal, string: "How do YOU feel when you have to speak in front of others?" }
     ])
 
     var pos = { x: 700, y: 100 }
@@ -424,14 +427,16 @@ function moveToSceneFour() {
         slow: 120,
         normal: 90,
     }, textLines = [
-        { speed: speeds.slow, string: "Sam has a test today but they forgot to study." },
+        { speed: speeds.slow, string: "Sam has a test today but she forgot to study. She might do badly on this test. " },
         { speed: speeds.pause, string: "", pause: true },
-        { speed: speeds.normal, string: "How do you think Sam feels?" },
-        { speed: speeds.normal, string: "Click the emotion Sam is feeling." }
+        { speed: speeds.normal, string: "How would YOU feel if you were Sam?" },
+        { speed: speeds.normal, string: "Click the emotion that you would feel." }
     ])
 }
 
+
 function moveToSceneFive() {
+    sceneFive = true
     document.getElementById("situationText").innerText = ""
     document.getElementById("scene5").style.display = "none"
     document.getElementById("mainGameButton").style.display = "block"
@@ -456,8 +461,8 @@ function moveToSceneFive() {
     }, textLines = [
         { speed: speeds.slow, string: "Sam has to sleep alone tonight." },
         { speed: speeds.pause, string: "", pause: true },
-        { speed: speeds.normal, string: "How do you think Sam feels?" },
-        { speed: speeds.normal, string: "Click the emotion you think Sam is feeling." }
+        { speed: speeds.normal, string: "How do you feel when YOU have to sleep by yourself?" },
+        { speed: speeds.normal, string: "Click the emotion you would feel. " }
     ])
 
     player.updatePosition({ x: 650, y: 300 })

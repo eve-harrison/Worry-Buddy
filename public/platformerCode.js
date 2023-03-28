@@ -2,10 +2,27 @@ const welcomePlayer = document.getElementById('welcomePlayerContainer')
 const playButton = document.getElementById('playButton')
 
 var anxietyScore = sessionStorage.getItem("anxietyScore")
+document.getElementById('anxietyLevel').innerText = anxietyScore;
+console.log(anxietyScore)
+if (anxietyScore > 12) {
+    document.getElementById('anxietyLevelAdvice').innerText = 'Your child displayed severe evidence of anxiety in every minigame scenario. It is important to talk to a healthcare professional who can help you and your child figure out ways to manage these feelings and find the right support.'
+} if (anxietyScore > 9 && anxietyScore < 12) {
+    document.getElementById('anxietyLevelAdvice').innerText = 'Your child may be experiencing some anxiety, which can be difficult to deal with. It is important to be there for them, listen to their concerns, and help them find ways to cope when they feel worried or scared. Consider talking to a mental health professional for additional support.'
+} if (anxietyScore > 5 && anxietyScore < 9) {
+    document.getElementById('anxietyLevelAdvice').innerText = 'Your child may be experiencing some anxiety and could benefit from some extra support. Encourage them to talk about their feelings, try relaxation techniques, and engage in fun and calming activities to help reduce stress'
+} if (anxietyScore <= 5) {
+    document.getElementById('anxietyLevelAdvice').innerText = 'Your child appears to be handling things well and showing little to no evidence of anxious thoughts. Keep up the good work and continue to support your childs emotional well-being by encouraging them to talk about their feelings and providing a safe and supportive environment'
+}
 
 playButton.addEventListener('click', () => {
     welcomePlayer.style.display = 'none'
 });
+
+let signUpBtn = document.getElementById('signUpButton')
+signUpBtn.addEventListener('click', () => {
+    console.log("got here")
+    window.location.href = '/login'
+})
 
 function holdSpaceBarForTimeLimit(timeLimitInSeconds, timerObject) {
     let isHoldingSpaceBar = false;
@@ -17,6 +34,8 @@ function holdSpaceBarForTimeLimit(timeLimitInSeconds, timerObject) {
     timerElement.style.position = 'absolute'
     timerElement.style.fontWeight = 'bolder'
     timerElement.style.backgroundColor = 'white'
+    timerElement.style.borderRadius = '10% / 50%'
+    timerElement.style.padding = '30px'
     document.body.appendChild(timerElement);
 
     const handleKeyDown = (event) => {
@@ -36,9 +55,9 @@ function holdSpaceBarForTimeLimit(timeLimitInSeconds, timerObject) {
         const seconds = Math.floor(remainingTime / 1000);
         let message;
         if (remainingTime <= timeLimitInSeconds * 500) {
-            message = 'Hold down the SPACE BAR and make sure to Breathe OUT ';
+            message = 'Keep holding down the space and breathe out slowly';
         } else {
-            message = 'Hold down the SPACE BAR and Breathe IN ';
+            message = 'Hold down the space button and take a big breath in ';
         }
 
         if ((!isHoldingSpaceBar) && remainingTime > 0 && (timerElement.style.display = 'block')) {
@@ -46,7 +65,7 @@ function holdSpaceBarForTimeLimit(timeLimitInSeconds, timerObject) {
             console.log(OVERALL_SCORE)
         }
 
-        timerElement.textContent = `${message} for ${seconds} more second${seconds === 1 ? '' : 's'}`;
+        timerElement.textContent = `${message} for ${seconds} second${seconds === 1 ? '' : 's'}`;
     };
 
     const startTimer = () => {
@@ -65,12 +84,12 @@ function holdSpaceBarForTimeLimit(timeLimitInSeconds, timerObject) {
                     setTimeout(() => {
                         timerElement.style.display = 'none'
                         animate()
-                    }, 500);
+                    }, 300);
                 }
             } else {
                 updateTimer();
             }
-        }, 10);
+        }, 12);
     };
 
     document.addEventListener('keydown', handleKeyDown);
@@ -151,7 +170,9 @@ let mysteryBoxes = []
 let flags = []
 let differentFoodTypes = []
 let differentDrinkTypes = []
+let foodsSelected = []
 let scroll = 0
+
 
 let keys = {
     up: {
@@ -169,7 +190,7 @@ class Player {
     constructor() {
         this.speed = 10
         this.position = {
-            x: 600,
+            x: 450,
             y: 100
         }
         this.velocity = {
@@ -265,21 +286,27 @@ class DrawObject {
                 switch (this.image) {
                     case breadImage:
                         OVERALL_SCORE += 10;
+                        foodsSelected.push('bread')
                         break;
                     case appleImage:
                         OVERALL_SCORE += 20;
+                        foodsSelected.push('apple')
                         break;
                     case cupcakeImage:
                         OVERALL_SCORE -= 5;
+                        foodsSelected.push('cupcake')
                         break;
                     case donutImage:
                         OVERALL_SCORE -= 5;
+                        foodsSelected.push('donut')
                         break;
                     case milkImage:
                         OVERALL_SCORE += 5;
+                        foodsSelected.push('milk')
                         break;
                     case colaImage:
                         OVERALL_SCORE -= 6;
+                        foodsSelected.push('cola')
                         break;
                 }
 
@@ -409,7 +436,7 @@ let scenarioBox_1 = new DrawObject({
 })
 
 let scenarioBox_2 = new DrawObject({
-    x: 5300,
+    x: 8700,
     y: 80,
     image: pinkBox,
     width: pinkBox.width,
@@ -417,7 +444,7 @@ let scenarioBox_2 = new DrawObject({
 })
 
 let scenarioBox_3 = new DrawObject({
-    x: 7200,
+    x: 5300,
     y: 80,
     image: pinkBox,
     width: pinkBox.width,
@@ -425,7 +452,7 @@ let scenarioBox_3 = new DrawObject({
 })
 
 let audioBox = new DrawObject({
-    x: 8700,
+    x: 7200,
     y: 80,
     image: redBox,
     width: redBox.width,
@@ -682,7 +709,7 @@ function animate() {
         var winDiv = document.createElement("div");
 
         winDiv.style.position = "fixed";
-        winDiv.style.top = "50%";
+        winDiv.style.top = "300px";
         winDiv.style.left = "50%";
         winDiv.style.transform = "translate(-50%, -50%)";
         winDiv.style.border = 'none'
@@ -691,26 +718,39 @@ function animate() {
         var header = document.createElement("h1");
         header.style.color = "black";
         header.style.fontSize = "7em";
+        header.style.backgroundColor = "white";
         header.textContent = "You Win!";
 
         var scoreParagraph = document.createElement("p");
         scoreParagraph.style.fontSize = "5em";
         scoreParagraph.style.color = "black";
+        scoreParagraph.style.backgroundColor = "white";
         scoreParagraph.textContent = "Your score: " + OVERALL_SCORE;
 
+        db.query('UPDATE users SET score = ? WHERE id = ?', [OVERALL_SCORE, user_id], (err, result) => {
+            if (err) {
+                console.log(err);
+            } else {
+                console.log(`User ${user_id} score updated to ${OVERALL_SCORE}`);
+            }
+        });
+
         var playAgainButton = document.createElement("button");
-        playAgainButton.textContent = "Review game play";
-        playAgainButton.style.backgroundColor = "green";
+        playAgainButton.textContent = "View game play results";
+        playAgainButton.style.backgroundColor = "red";
+        playAgainButton.style.cursor = 'pointer';
         playAgainButton.style.border = "none";
         playAgainButton.style.color = "white";
         playAgainButton.style.fontSize = "1.5em";
         playAgainButton.style.padding = "10px";
         playAgainButton.style.position = "absolute";
         playAgainButton.style.bottom = "10px";
-        playAgainButton.style.right = "10px";
+        playAgainButton.style.right = "130px";
 
         playAgainButton.addEventListener('click', () => {
-            window.location.href = './login'
+            winDiv.style.display = "none"
+            document.getElementById('resultsDiv').style.display = 'block'
+
         })
 
         winDiv.appendChild(header);
@@ -782,8 +822,8 @@ function preloadImages(imageUrls) {
     return Promise.all(promises);
 }
 
-var visualGameText = 'Focus on all of the red items you can see. Click them when you see them!';
-var visualGameDiv = createTextDiv(visualGameText, '450px', '90px', '100px', '500px');
+var visualGameText = 'Look for all the red things you can find and click them. Did you know that when you are feeling worried, it can help to look around and focus on 5 things you can see?';
+var visualGameDiv = createTextDiv(visualGameText, '450px', '120px', '70px', '500px');
 let vTB = []
 vTB.push(visualGameDiv)
 
@@ -800,7 +840,7 @@ async function beginVisualGame() {
         './img/visualGameImages/cherry.png',
         './img/visualGameImages/redLollipop.png',
         './img/visualGameImages/strawberry.png',
-        // './img/visualGameImages/redCircle.png'
+        './img/visualGameImages/redCircle.png'
     ];
 
     const notRedImages = [
@@ -1007,7 +1047,7 @@ function createTextDiv(text, width, height, top, left) {
     return div;
 }
 
-var foodText = 'What food should Sam eat for lunch today? Click three items!';
+var foodText = 'What should Sam eat for lunch today? Click three items!';
 var foodDiv = createTextDiv(foodText, '250px', '100px', '460px', '780px');
 let textBox = []
 textBox.push(foodDiv)
@@ -1028,6 +1068,7 @@ function beginFirstScenario() {
 
     if (foodClickCount >= 3) {
         cancelAnimationFrame(scenarioOneAnimationId);
+        document.getElementById('foodSelectedGame').innerText = foodsSelected;
         gsap.to('#overlap', {
             opacity: 1,
             onComplete: () => {
@@ -1064,7 +1105,7 @@ const playerTwo = new Sprite({
 })
 
 var afterSchoolText = 'School is over and the weather is sunny! What should Sam do this evening?';
-var afterSchoolDiv = createTextDiv(afterSchoolText, '450px', '150px', '130px', '600px');
+var afterSchoolDiv = createTextDiv(afterSchoolText, '450px', '80px', '130px', '600px');
 let textBox2 = []
 textBox2.push(afterSchoolDiv)
 
@@ -1099,12 +1140,15 @@ document.querySelectorAll('.optionButton').forEach((button) => {
         nextButton2.addEventListener('click', () => {
             next2Clicked = true;
             if (walkClicked && next2Clicked) {
+                document.getElementById('walkChosen').style.display = 'block'
                 OVERALL_SCORE += 5
                 console.log(OVERALL_SCORE)
             } if (friendClicked && next2Clicked) {
+                document.getElementById('friendChosen').style.display = 'block'
                 OVERALL_SCORE += 10
                 console.log(OVERALL_SCORE)
             } if (sleepClicked && next2Clicked) {
+                document.getElementById('sleepChosen').style.display = 'block'
                 OVERALL_SCORE -= 5
                 console.log(OVERALL_SCORE)
             }
@@ -1194,7 +1238,7 @@ const robot3 = new Sprite({
     frames: 4
 })
 
-var inSchoolText = 'Sam just arrived at school! What should they do first?';
+var inSchoolText = 'Sam just arrived at school! What should she do first?';
 var inSchoolDiv = createTextDiv(inSchoolText, '450px', '70px', '90px', '600px');
 let textBox3 = []
 textBox3.push(inSchoolDiv)
@@ -1229,11 +1273,14 @@ document.querySelectorAll('.schoolOptionButton').forEach((button) => {
         nextButton3.addEventListener('click', () => {
             next3Clicked = true
             if (talkClicked && next3Clicked) {
-                console.log("TALKING TO FRIENDS HELPS THIS CHILD")
+                document.getElementById('copingMethodChosen').innerText = 'talk to a friend'
+                document.getElementById('copingMethodAdvice').innerText = ("socialising may help your child cope with difficult situations. Encourage them to continue to reach out to friends when they need support and to be a good listener in return. They can also try other ways to socialize and connect with others, such as joining a club or participating in group activities. ")
             } if (drawClicked && next3Clicked) {
-                console.log("DRAWING HELPS THIS CHILD")
+                document.getElementById('copingMethodChosen').innerText = 'draw a picture'
+                document.getElementById('copingMethodAdvice').innerText = ("Drawing and being creative can be a really effective way to cope with difficult situations. Encourage your child to keep a sketchbook or art journal where they can express themselves freely, without worrying about making mistakes.")
             } if (musicClicked && next3Clicked) {
-                console.log("MUSIC HELPS THIS CHILD")
+                document.getElementById('copingMethodChosen').innerText = 'listen to music'
+                document.getElementById('copingMethodAdvice').innerText = ("Music can be a powerful tool for calming the mind and reducing stress. Encourage your child to make a playlist of songs that make them feel good and to listen to them when they're feeling overwhelmed. They can also try singing or dancing along to the music to help release tension and boost their mood")
             }
             cancelAnimationFrame(scenarioThreeAnimationId)
             gsap.to('#overlap', {
@@ -1277,13 +1324,16 @@ function beginThirdScenario() {
 document.getElementById('noButton').addEventListener('click', () => {
     document.getElementById('animalButtonsDiv').style.display = 'block'
     document.getElementById('animal-container').style.display = 'block'
+    document.getElementById('selectAnimal').style.display = 'block'
     document.getElementById('confirmSelection').style.display = 'none'
     document.getElementById('selectedAnimal').style.display = 'none'
+
 })
 
 document.getElementById('yesButton').addEventListener('click', () => {
     document.getElementById('animalButtonsDiv').style.display = 'block'
     document.getElementById('animal-container').style.display = 'block'
+    document.getElementById('selectAnimal').style.display = 'block'
     document.getElementById('confirmSelection').style.display = 'none'
     document.getElementById('selectedAnimal').style.display = 'none'
 
@@ -1297,6 +1347,7 @@ document.getElementById('yesButton').addEventListener('click', () => {
             onComplete: () => {
                 document.getElementById('animalButtonsDiv').style.display = 'none'
                 document.getElementById('animal-container').style.display = 'none'
+                document.getElementById('selectAnimal').style.display = 'none'
                 document.getElementById('confirmSelection').style.display = 'none'
                 document.getElementById('selectedAnimal').style.display = 'none'
                 document.getElementById('audioGameDiv').style.display = 'none'
