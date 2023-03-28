@@ -18,12 +18,6 @@ playButton.addEventListener('click', () => {
     welcomePlayer.style.display = 'none'
 });
 
-let signUpBtn = document.getElementById('signUpButton')
-signUpBtn.addEventListener('click', () => {
-    console.log("got here")
-    window.location.href = '/login'
-})
-
 function holdSpaceBarForTimeLimit(timeLimitInSeconds, timerObject) {
     let isHoldingSpaceBar = false;
     let timerId = null;
@@ -475,7 +469,7 @@ mysteryBoxes.push(visualBox)
 mysteryBoxes.push(timer)
 
 let flag = new DrawObject({
-    x: 9500,
+    x: 4500,
     y: 95,
     image: single_flag,
     width: single_flag.width,
@@ -726,14 +720,7 @@ function animate() {
         scoreParagraph.style.color = "black";
         scoreParagraph.style.backgroundColor = "white";
         scoreParagraph.textContent = "Your score: " + OVERALL_SCORE;
-
-        db.query('UPDATE users SET score = ? WHERE id = ?', [OVERALL_SCORE, user_id], (err, result) => {
-            if (err) {
-                console.log(err);
-            } else {
-                console.log(`User ${user_id} score updated to ${OVERALL_SCORE}`);
-            }
-        });
+        gameOver(OVERALL_SCORE)
 
         var playAgainButton = document.createElement("button");
         playAgainButton.textContent = "View game play results";

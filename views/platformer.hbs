@@ -460,3 +460,31 @@
     integrity="sha512-H6cPm97FAsgIKmlBA4s774vqoN24V5gSQL4yBTDOY2su2DeXZVhQPxFK4P6GPdnZqM9fg1G3cMv5wD7e6cFLZQ=="
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="/platformerCode.js" type="module"></script>
+<script>
+    // Call this function with the final score to save it to the database
+    function saveScore(score) {
+        fetch('{{ saveScoreUrl }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ score })
+        })
+            .then(response => {
+                if (response.ok) {
+                    console.log(`Score ${score} saved to the database`);
+                } else {
+                    console.log(`Error saving score: ${response.statusText}`);
+                }
+            })
+            .catch(error => {
+                console.log(`Error saving score: ${error.message}`);
+            });
+    }
+
+    // Call this function with the final score when the game ends
+    function gameOver(score) {
+        console.log(`Game over! Final score: ${score}`);
+        saveScore(score);
+    }
+</script>
