@@ -122,16 +122,17 @@
         <div id="loginOrRegister">
             <form action="/auth/register" method="POST">
                 <label for="name-reg" class="form-label">Enter your name : </label>
-                <input type="text" class="inputArea" id="name-reg" name="name">
+                <input type="text" class="inputArea" id="name-reg" name="name" required>
 
                 <label for="email-reg" class="form-label">Enter your email : </label>
-                <input type="text" class="inputArea" id="email-reg" name="email">
+                <input type="email" class="inputArea" id="email-reg" name="email" required>
 
                 <label for="password-reg" class="form-label">Enter a password : </label>
-                <input type="password" class="inputArea" id="password-reg" name="password">
+                <input type="password" class="inputArea" id="password-reg" name="password" minlength="6" required>
 
                 <label for="password-conf-reg" class="form-label">Confirm password : </label>
-                <input type="password" class="inputArea" id="password-conf-reg" name="password_confirm">
+                <input type="password" class="inputArea" id="password-conf-reg" name="password_confirm" minlength="6"
+                    required>
 
                 <img id="playerImage" src="./img/playerForRegisterScreen.png" alt="Player">
                 <button id="signUpButton" type="submit">Sign up</button>
@@ -139,5 +140,6 @@
         </div>
     </div>
 </body>
+
 
 </html>

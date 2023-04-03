@@ -22,6 +22,7 @@ function holdSpaceBarForTimeLimit(timeLimitInSeconds, timerObject) {
     let isHoldingSpaceBar = false;
     let timerId = null;
     let remainingTime = timeLimitInSeconds * 1000;
+    let isFunctionActive = true;
 
     const timerElement = document.createElement('div');
     timerElement.style.fontSize = '28px';
@@ -33,7 +34,7 @@ function holdSpaceBarForTimeLimit(timeLimitInSeconds, timerObject) {
     document.body.appendChild(timerElement);
 
     const handleKeyDown = (event) => {
-        if (event.code === 'Space' && !isHoldingSpaceBar) {
+        if (event.code === 'Space' && !isHoldingSpaceBar && isFunctionActive) {
             isHoldingSpaceBar = true;
             startTimer();
         }
@@ -55,7 +56,11 @@ function holdSpaceBarForTimeLimit(timeLimitInSeconds, timerObject) {
         }
 
         if ((!isHoldingSpaceBar) && remainingTime > 0 && (timerElement.style.display = 'block')) {
-            OVERALL_SCORE--
+            if (anxietyScore < 5) {
+                OVERALL_SCORE -= 3
+            } else {
+                OVERALL_SCORE--
+            }
             console.log(OVERALL_SCORE)
         }
 
@@ -79,7 +84,7 @@ function holdSpaceBarForTimeLimit(timeLimitInSeconds, timerObject) {
                         timerElement.style.display = 'none'
                         animate()
                     }, 300);
-                }
+                } isFunctionActive = false;
             } else {
                 updateTimer();
             }
@@ -469,7 +474,7 @@ mysteryBoxes.push(visualBox)
 mysteryBoxes.push(timer)
 
 let flag = new DrawObject({
-    x: 4500,
+    x: 9500,
     y: 95,
     image: single_flag,
     width: single_flag.width,
@@ -561,6 +566,11 @@ function animate() {
         if (player.position.y > canvas.height) {
             player.position.y = player.position.y + 100
         }
+    }
+
+    if (keys.up.pressed && player.position.y < 0) {
+        player.velocity.y = 0;
+        player.position.y = 0;
     }
 
     if (player.collidesWith(timer)) {
@@ -1068,6 +1078,7 @@ function beginFirstScenario() {
                 });
             }
         });
+
     }
 }
 
@@ -1123,12 +1134,12 @@ document.querySelectorAll('.optionButton').forEach((button) => {
         nextButton2.setAttribute('class', 'next-button');
         nextButton2.innerText = 'Finish';
         document.body.appendChild(nextButton2);
-        button.style.backgroundColor = 'green'
+        // button.style.backgroundColor = 'green'
         nextButton2.addEventListener('click', () => {
             next2Clicked = true;
             if (walkClicked && next2Clicked) {
                 document.getElementById('walkChosen').style.display = 'block'
-                OVERALL_SCORE += 5
+                OVERALL_SCORE += 10
                 console.log(OVERALL_SCORE)
             } if (friendClicked && next2Clicked) {
                 document.getElementById('friendChosen').style.display = 'block'
@@ -1437,6 +1448,7 @@ function beginAudioGame() {
     animalContainer.addEventListener('click', function (event) {
         const clickedElement = event.target;
         if (clickedElement.tagName === 'IMG') {
+            document.getElementById('selectAnimal').style.display = 'none'
             document.getElementById('animalButtonsDiv').style.display = 'none'
             document.getElementById('confirmSelection').style.display = 'block'
             document.getElementById('selectedAnimal').style.display = 'block'

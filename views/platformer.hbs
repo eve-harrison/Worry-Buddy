@@ -84,11 +84,21 @@
         border: none;
     }
 
-    #optionBar,
     #schoolOptionBar {
         position: absolute;
         bottom: 0;
         left: 450px;
+        height: 100px;
+        z-index: 10;
+        margin: 0;
+        padding: 0;
+        display: flex;
+    }
+
+    #optionBar {
+        position: absolute;
+        bottom: 0;
+        left: 400px;
         height: 100px;
         z-index: 10;
         margin: 0;
@@ -394,7 +404,7 @@
         <button id="frogButton" class="animalButton">Play Sound</button>
         <button id="cowButton" class="animalButton">Play Sound</button>
     </div>
-    <p id="selectAnimal">Press the button to play and animal sound. Click on the animal you could hear! </p>
+    <p id="selectAnimal">Press the button to play and animal sound. Click on the animal you could hear!</p>
     <div id="animal-container">
         <img src="./img/audioGameData/cat.png" alt="Cat" id="cat" class="animal">
         <img src="./img/audioGameData/chicken.png" alt="Chicken" id="chicken" class="animal">
@@ -405,7 +415,7 @@
     </div>
     <p id="selectedAnimal"></p>
     <div id="confirmSelection" style="display:none;">
-        <button id="noButton" class="decisionButton"> No. Choose again. </button>
+        <button id="noButton" class="decisionButton"> Choose again </button>
         <button id="yesButton" class="decisionButton"> Yes </button>
     </div>
 </div>
