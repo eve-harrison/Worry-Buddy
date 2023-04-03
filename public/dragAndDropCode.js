@@ -11,9 +11,6 @@ playerIdle.src = './img/playerIdle.png'
 
 let sceneFive = false
 
-let boy = new Image();
-boy.src = './img/boyForClassroom.png'
-
 let robotImage2 = new Image();
 robotImage2.src = './img/robotTurningAround.png'
 
@@ -25,6 +22,7 @@ const moveOnButton = document.getElementById("mainGameButton")
 moveOnButton.addEventListener("click", () => {
     var anxietyScore = preGameAnxietyLevel;
     sessionStorage.setItem("anxietyScore", anxietyScore);
+    console.log("anxiety score: " + anxietyScore)
 })
 
 const happyButton = document.getElementById("btn1")
@@ -235,33 +233,6 @@ function writeUpNewSituation(speeds, textLines) {
     }, 600)
 }
 
-
-happyButton.addEventListener("click", () => {
-    happyClicked = true;
-    checkClicks();
-})
-
-dontCareButton.addEventListener("click", () => {
-    dontCareClicked = true;
-    checkClicks();
-})
-
-sadButton.addEventListener("click", () => {
-    sadClicked = true;
-    checkClicks();
-})
-
-worriedButton.addEventListener("click", () => {
-    worriedClicked = true;
-    checkClicks();
-})
-
-scaredButton.addEventListener("click", () => {
-    scaredClicked = true;
-    checkClicks();
-})
-
-
 let player = new Player()
 let sprite1 = new Sprite({
     x: 600,
@@ -287,34 +258,56 @@ function updateAnxietyScore() {
             checkClicks();
         });
     }
+}
 
-    function checkClicks() {
-        if (happyClicked && nextButtonClicked) {
-            preGameAnxietyLevel -= 1
-            document.getElementById("anxietyLevel").innerHTML = preGameAnxietyLevel
-            happyClicked = false;
-            nextButtonClicked = false;
-        }
-        if (sadClicked && nextButtonClicked) {
-            preGameAnxietyLevel += 1
-            document.getElementById("anxietyLevel").innerHTML = preGameAnxietyLevel
-            sadClicked = false;
-            nextButtonClicked = false;
-        }
-        if (worriedClicked && nextButtonClicked) {
-            preGameAnxietyLevel += 2
-            document.getElementById("anxietyLevel").innerHTML = preGameAnxietyLevel
-            worriedClicked = false;
-            nextButtonClicked = false;
-        }
-        if (scaredClicked && nextButtonClicked) {
-            preGameAnxietyLevel += 3
-            document.getElementById("anxietyLevel").innerHTML = preGameAnxietyLevel
-            scaredClicked = false;
-            nextButtonClicked = false;
-        }
+function checkClicks() {
+    if (happyClicked && nextButtonClicked) {
+        preGameAnxietyLevel -= 1
+        happyClicked = false;
+        nextButtonClicked = false;
+    }
+    if (sadClicked && nextButtonClicked) {
+        preGameAnxietyLevel += 1
+        sadClicked = false;
+        nextButtonClicked = false;
+    }
+    if (worriedClicked && nextButtonClicked) {
+        preGameAnxietyLevel += 2
+        worriedClicked = false;
+        nextButtonClicked = false;
+    }
+    if (scaredClicked && nextButtonClicked) {
+        preGameAnxietyLevel += 3
+        scaredClicked = false;
+        nextButtonClicked = false;
     }
 }
+
+
+happyButton.addEventListener("click", () => {
+    happyClicked = true;
+    checkClicks();
+})
+
+dontCareButton.addEventListener("click", () => {
+    dontCareClicked = true;
+    checkClicks();
+})
+
+sadButton.addEventListener("click", () => {
+    sadClicked = true;
+    checkClicks();
+})
+
+worriedButton.addEventListener("click", () => {
+    worriedClicked = true;
+    checkClicks();
+})
+
+scaredButton.addEventListener("click", () => {
+    scaredClicked = true;
+    checkClicks();
+})
 
 function enableNextButton() {
     updateAnxietyScore()
@@ -448,10 +441,23 @@ function moveToSceneFive() {
     document.getElementById("canvas").style.width = "700px"
     document.getElementById("canvas").style.height = "550px"
 
-
     document.querySelectorAll('.emotionButton').forEach(function (button) {
-        button.style.backgroundColor = "#6c656a"
+        button.style.backgroundColor = "#6c656a";
         button.style.border = "none"
+    });
+
+    const buttons = document.querySelectorAll('.emotionButton');
+    let activeButton = null;
+    buttons.forEach(button => {
+        button.addEventListener('click', () => {
+            if (activeButton !== button) {
+                if (activeButton) {
+                    activeButton.style.backgroundColor = "#6c656a";
+                }
+                button.style.backgroundColor = 'rgb(200, 255, 0)';
+                activeButton = button;
+            }
+        });
     });
 
     writeUpNewSituation(speeds = {

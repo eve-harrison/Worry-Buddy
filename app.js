@@ -78,7 +78,6 @@ app.post("/auth/register", (req, res) => {
             message: 'Passwords do not match'
         });
     }
-    // Escape any special characters in the email input to prevent SQL injection
     const escapedEmail = mysql.escape(email);
     db.query(`SELECT email FROM users WHERE email = ${escapedEmail}`, async (error, result) => {
         if (error) {
@@ -150,7 +149,7 @@ app.post('/platformer', (req, res) => {
 app.get("/platformer", (req, res) => {
     if (req.session.loggedin) {
         res.render("platformer", {
-            saveScoreUrl: '/save-score' // Add this line to pass the URL to the view
+            saveScoreUrl: '/save-score'
         });
     } else {
         res.redirect("/login");
