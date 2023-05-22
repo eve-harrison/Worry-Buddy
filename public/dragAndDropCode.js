@@ -485,5 +485,4 @@ writeUpNewSituation(speeds = {
     { speed: speeds.normal, string: "How does going to school make YOU feel?" }
 ])
 
-
 animate()
